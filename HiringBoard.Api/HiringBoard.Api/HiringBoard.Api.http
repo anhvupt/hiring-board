@@ -1,0 +1,6 @@
+@HiringBoard.Api_HostAddress = http://localhost:5197
+
+GET {{HiringBoard.Api_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
