@@ -58,92 +58,92 @@ namespace HiringBoard.Api.Migrations
                         new
                         {
                             Id = 1,
-                            Email = "mireya@champlinrodriguez.name",
-                            FirstName = "Nadia",
+                            Email = "josiah.stokes@cassinbrakus.co.uk",
+                            FirstName = "Carmine",
                             IsDeleted = false,
-                            LastName = "Altenwerth",
-                            Phone = "(074)830-2675 x18727"
+                            LastName = "Lakin",
+                            Phone = "399.443.6655"
                         },
                         new
                         {
                             Id = 2,
-                            Email = "cedrick@durgan.uk",
-                            FirstName = "Cary",
+                            Email = "melvin_ward@swaniawski.info",
+                            FirstName = "Shaylee",
                             IsDeleted = false,
-                            LastName = "Franecki",
-                            Phone = "034.776.1279 x075"
+                            LastName = "Mitchell",
+                            Phone = "1-190-432-7848 x2744"
                         },
                         new
                         {
                             Id = 3,
-                            Email = "courtney.johnson@nicolas.name",
-                            FirstName = "Kendrick",
+                            Email = "demarcus_hoeger@cruickshank.com",
+                            FirstName = "Samara",
                             IsDeleted = false,
-                            LastName = "Hahn",
-                            Phone = "1-592-952-8665 x3576"
+                            LastName = "Feeney",
+                            Phone = "598-173-8221 x35450"
                         },
                         new
                         {
                             Id = 4,
-                            Email = "yadira@labadiefadel.biz",
-                            FirstName = "Carli",
+                            Email = "josiah.schaefer@greenfelderbrekke.ca",
+                            FirstName = "Nayeli",
                             IsDeleted = false,
-                            LastName = "Roob",
-                            Phone = "500-436-4262 x84315"
+                            LastName = "Wilkinson",
+                            Phone = "1-307-834-3481 x03372"
                         },
                         new
                         {
                             Id = 5,
-                            Email = "dominic_kub@heathcote.ca",
-                            FirstName = "Jacques",
+                            Email = "jamil_davis@beier.uk",
+                            FirstName = "Stewart",
                             IsDeleted = false,
-                            LastName = "Abernathy",
-                            Phone = "(696)465-2404 x3845"
+                            LastName = "Bartoletti",
+                            Phone = "(969)416-1116"
                         },
                         new
                         {
                             Id = 6,
-                            Email = "casper@jewess.uk",
-                            FirstName = "Loraine",
+                            Email = "moshe@ornschaden.ca",
+                            FirstName = "Vinnie",
                             IsDeleted = false,
-                            LastName = "Weber",
-                            Phone = "(365)554-0101 x0252"
+                            LastName = "Luettgen",
+                            Phone = "861.001.4966"
                         },
                         new
                         {
                             Id = 7,
-                            Email = "ophelia.rice@huelsbergstrom.uk",
-                            FirstName = "Philip",
+                            Email = "phyllis_bayer@heaney.ca",
+                            FirstName = "Jude",
                             IsDeleted = false,
-                            LastName = "Hackett",
-                            Phone = "831-711-9989"
+                            LastName = "Cormier",
+                            Phone = "(208)624-6540"
                         },
                         new
                         {
                             Id = 8,
-                            Email = "elena@beckerdonnelly.co.uk",
-                            FirstName = "Margarett",
+                            Email = "ubaldo_kunze@abbott.info",
+                            FirstName = "Francesco",
                             IsDeleted = false,
-                            LastName = "Robel",
-                            Phone = "(125)242-3587"
+                            LastName = "Bruen",
+                            Phone = "838.750.0933 x07702"
                         },
                         new
                         {
                             Id = 9,
-                            Email = "kaela@wilderman.com",
-                            FirstName = "Jewel",
+                            Email = "elizabeth_kiehn@kundehilpert.us",
+                            FirstName = "Joaquin",
                             IsDeleted = false,
-                            LastName = "Kihn",
-                            Phone = "260-893-4757"
+                            LastName = "Gerlach",
+                            Phone = "(406)500-2983"
                         },
                         new
                         {
                             Id = 10,
-                            Email = "michale@kassulkeokon.name",
-                            FirstName = "Joy",
+                            Email = "floy_eichmann@brakusbuckridge.uk",
+                            FirstName = "Roxane",
                             IsDeleted = false,
-                            LastName = "Osinski",
-                            Phone = "999-247-8060 x002"
+                            LastName = "Trantow",
+                            Phone = "414-429-4374 x966"
                         });
                 });
 
@@ -154,9 +154,6 @@ namespace HiringBoard.Api.Migrations
                         .HasColumnType("int");
 
                     b.Property<int>("CandidateId")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("CandidateId1")
                         .HasColumnType("int");
 
                     b.Property<DateTimeOffset>("InterviewDate")
@@ -180,9 +177,6 @@ namespace HiringBoard.Api.Migrations
                     b.HasIndex("CandidateId")
                         .IsUnique();
 
-                    b.HasIndex("CandidateId1")
-                        .IsUnique();
-
                     b.HasIndex("InterviewerId");
 
                     b.HasIndex("StageId");
@@ -194,101 +188,101 @@ namespace HiringBoard.Api.Migrations
                         {
                             Id = 1,
                             CandidateId = 1,
-                            InterviewDate = new DateTimeOffset(new DateTime(2024, 3, 24, 22, 7, 1, 770, DateTimeKind.Unspecified).AddTicks(5623), new TimeSpan(0, 7, 0, 0, 0)),
+                            InterviewDate = new DateTimeOffset(new DateTime(2024, 3, 26, 21, 15, 3, 799, DateTimeKind.Unspecified).AddTicks(5064), new TimeSpan(0, 7, 0, 0, 0)),
                             InterviewerId = 1,
                             IsDeleted = false,
-                            Notes = "Rem est qui incidunt.",
+                            Notes = "Ullam architecto porro quisquam facilis et quia ut eum.",
                             StageId = 2
                         },
                         new
                         {
                             Id = 2,
                             CandidateId = 2,
-                            InterviewDate = new DateTimeOffset(new DateTime(2024, 3, 24, 22, 7, 1, 770, DateTimeKind.Unspecified).AddTicks(6833), new TimeSpan(0, 7, 0, 0, 0)),
-                            InterviewerId = 1,
+                            InterviewDate = new DateTimeOffset(new DateTime(2024, 3, 26, 21, 15, 3, 799, DateTimeKind.Unspecified).AddTicks(6712), new TimeSpan(0, 7, 0, 0, 0)),
+                            InterviewerId = 2,
                             IsDeleted = false,
-                            Notes = "Mollitia optio quod excepturi perspiciatis nihil qui.",
-                            StageId = 1
+                            Notes = "Amet omnis tempora animi similique sint.",
+                            StageId = 2
                         },
                         new
                         {
                             Id = 3,
                             CandidateId = 3,
-                            InterviewDate = new DateTimeOffset(new DateTime(2024, 3, 24, 22, 7, 1, 770, DateTimeKind.Unspecified).AddTicks(8299), new TimeSpan(0, 7, 0, 0, 0)),
-                            InterviewerId = 2,
+                            InterviewDate = new DateTimeOffset(new DateTime(2024, 3, 26, 21, 15, 3, 799, DateTimeKind.Unspecified).AddTicks(7642), new TimeSpan(0, 7, 0, 0, 0)),
+                            InterviewerId = 1,
                             IsDeleted = false,
-                            Notes = "Esse eos dolor sint magnam sapiente consectetur sed aperiam laboriosam.",
-                            StageId = 3
+                            Notes = "Similique repellat corrupti unde architecto expedita et non.",
+                            StageId = 1
                         },
                         new
                         {
                             Id = 4,
                             CandidateId = 4,
-                            InterviewDate = new DateTimeOffset(new DateTime(2024, 3, 24, 22, 7, 1, 771, DateTimeKind.Unspecified).AddTicks(547), new TimeSpan(0, 7, 0, 0, 0)),
+                            InterviewDate = new DateTimeOffset(new DateTime(2024, 3, 26, 21, 15, 3, 799, DateTimeKind.Unspecified).AddTicks(8828), new TimeSpan(0, 7, 0, 0, 0)),
                             InterviewerId = 1,
                             IsDeleted = false,
-                            Notes = "Aliquid placeat omnis repellendus eos dolor tempora itaque ut delectus.",
+                            Notes = "Voluptatem praesentium maxime omnis perspiciatis quos sit.",
                             StageId = 1
                         },
                         new
                         {
                             Id = 5,
                             CandidateId = 5,
-                            InterviewDate = new DateTimeOffset(new DateTime(2024, 3, 24, 22, 7, 1, 771, DateTimeKind.Unspecified).AddTicks(2628), new TimeSpan(0, 7, 0, 0, 0)),
+                            InterviewDate = new DateTimeOffset(new DateTime(2024, 3, 26, 21, 15, 3, 800, DateTimeKind.Unspecified).AddTicks(5), new TimeSpan(0, 7, 0, 0, 0)),
                             InterviewerId = 2,
                             IsDeleted = false,
-                            Notes = "Saepe unde sit et consequuntur.",
+                            Notes = "Amet et aliquid perspiciatis nostrum voluptatem.",
                             StageId = 1
                         },
                         new
                         {
                             Id = 6,
                             CandidateId = 6,
-                            InterviewDate = new DateTimeOffset(new DateTime(2024, 3, 24, 22, 7, 1, 771, DateTimeKind.Unspecified).AddTicks(3725), new TimeSpan(0, 7, 0, 0, 0)),
+                            InterviewDate = new DateTimeOffset(new DateTime(2024, 3, 26, 21, 15, 3, 800, DateTimeKind.Unspecified).AddTicks(914), new TimeSpan(0, 7, 0, 0, 0)),
                             InterviewerId = 2,
                             IsDeleted = false,
-                            Notes = "Quam dolorem quis recusandae illo est accusantium.",
-                            StageId = 3
+                            Notes = "Quia ab omnis fugiat vel optio impedit sit.",
+                            StageId = 1
                         },
                         new
                         {
                             Id = 7,
                             CandidateId = 7,
-                            InterviewDate = new DateTimeOffset(new DateTime(2024, 3, 24, 22, 7, 1, 771, DateTimeKind.Unspecified).AddTicks(5263), new TimeSpan(0, 7, 0, 0, 0)),
+                            InterviewDate = new DateTimeOffset(new DateTime(2024, 3, 26, 21, 15, 3, 800, DateTimeKind.Unspecified).AddTicks(2149), new TimeSpan(0, 7, 0, 0, 0)),
                             InterviewerId = 2,
                             IsDeleted = false,
-                            Notes = "Quia eos ab vitae repellendus sint itaque.",
-                            StageId = 2
+                            Notes = "Quo animi aliquam nam autem.",
+                            StageId = 1
                         },
                         new
                         {
                             Id = 8,
                             CandidateId = 8,
-                            InterviewDate = new DateTimeOffset(new DateTime(2024, 3, 24, 22, 7, 1, 771, DateTimeKind.Unspecified).AddTicks(6678), new TimeSpan(0, 7, 0, 0, 0)),
-                            InterviewerId = 2,
+                            InterviewDate = new DateTimeOffset(new DateTime(2024, 3, 26, 21, 15, 3, 800, DateTimeKind.Unspecified).AddTicks(2910), new TimeSpan(0, 7, 0, 0, 0)),
+                            InterviewerId = 1,
                             IsDeleted = false,
-                            Notes = "Autem quia est consequatur non qui maiores necessitatibus nisi.",
-                            StageId = 3
+                            Notes = "Saepe illum provident voluptatibus rerum.",
+                            StageId = 2
                         },
                         new
                         {
                             Id = 9,
                             CandidateId = 9,
-                            InterviewDate = new DateTimeOffset(new DateTime(2024, 3, 24, 22, 7, 1, 771, DateTimeKind.Unspecified).AddTicks(8576), new TimeSpan(0, 7, 0, 0, 0)),
-                            InterviewerId = 2,
+                            InterviewDate = new DateTimeOffset(new DateTime(2024, 3, 26, 21, 15, 3, 800, DateTimeKind.Unspecified).AddTicks(3699), new TimeSpan(0, 7, 0, 0, 0)),
+                            InterviewerId = 1,
                             IsDeleted = false,
-                            Notes = "Quasi eligendi eligendi qui excepturi assumenda animi quibusdam voluptate dolorem.",
-                            StageId = 2
+                            Notes = "Cupiditate omnis impedit vitae beatae assumenda consectetur eius.",
+                            StageId = 3
                         },
                         new
                         {
                             Id = 10,
                             CandidateId = 10,
-                            InterviewDate = new DateTimeOffset(new DateTime(2024, 3, 24, 22, 7, 1, 772, DateTimeKind.Unspecified).AddTicks(2402), new TimeSpan(0, 7, 0, 0, 0)),
-                            InterviewerId = 2,
+                            InterviewDate = new DateTimeOffset(new DateTime(2024, 3, 26, 21, 15, 3, 800, DateTimeKind.Unspecified).AddTicks(5002), new TimeSpan(0, 7, 0, 0, 0)),
+                            InterviewerId = 1,
                             IsDeleted = false,
-                            Notes = "Facilis aut voluptatum eum inventore odit pariatur iste.",
-                            StageId = 3
+                            Notes = "Tenetur aliquam iure vel numquam officia consequatur sit.",
+                            StageId = 2
                         });
                 });
 
@@ -314,19 +308,19 @@ namespace HiringBoard.Api.Migrations
                         {
                             Id = 1,
                             IsDeleted = false,
-                            Name = "Camron Klein"
+                            Name = "Prof. Elsie Muller"
                         },
                         new
                         {
                             Id = 2,
                             IsDeleted = false,
-                            Name = "Miss Hillary Darby Gusikowski"
+                            Name = "Prof. Ladarius Boehm"
                         },
                         new
                         {
                             Id = 3,
                             IsDeleted = false,
-                            Name = "Javier Gutmann"
+                            Name = "Nakia Baumbach"
                         });
                 });
 
@@ -377,14 +371,10 @@ namespace HiringBoard.Api.Migrations
             modelBuilder.Entity("HiringBoard.Api.Domain.Entities.Interview", b =>
                 {
                     b.HasOne("HiringBoard.Api.Domain.Entities.Candidate", "Candidate")
-                        .WithOne()
+                        .WithOne("Interview")
                         .HasForeignKey("HiringBoard.Api.Domain.Entities.Interview", "CandidateId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.HasOne("HiringBoard.Api.Domain.Entities.Candidate", null)
-                        .WithOne("Interview")
-                        .HasForeignKey("HiringBoard.Api.Domain.Entities.Interview", "CandidateId1");
 
                     b.HasOne("HiringBoard.Api.Domain.Entities.Interviewer", "Interviewer")
                         .WithMany("Interviews")

@@ -36,15 +36,15 @@ public class EfContext(DbContextOptions options, IConfiguration config) : DbCont
             .WithMany(x => x.Interviews)
             .HasForeignKey(x => x.StageId)
             .OnDelete(DeleteBehavior.SetNull);
+
+            builder.HasOne(x => x.Candidate)
+            .WithOne(x => x.Interview)
+            .HasForeignKey<Interview>(x => x.CandidateId)
+            .OnDelete(DeleteBehavior.Cascade);
         });
 
         modelBuilder.Entity<Candidate>(builder =>
         {
-            builder.HasOne<Interview>()
-            .WithOne(x => x.Candidate)
-            .HasForeignKey<Interview>(x => x.CandidateId)
-            .OnDelete(DeleteBehavior.Cascade);
-
             builder.HasIndex(x => x.FirstName).HasDatabaseName("IX_Candidate_Firstname");
             builder.HasIndex(x => x.LastName).HasDatabaseName("Ix_Candidate_Lastname");
         });

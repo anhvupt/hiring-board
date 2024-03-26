@@ -1,6 +1,7 @@
 ﻿using HiringBoard.Api.Application.Features.Common;
 using HiringBoard.Api.Infrastructure;
 using HiringBoard.Api.Infrastructure.Database.Context;
+using Serilog;
 using System.Reflection;
 
 namespace HiringBoard.Api.Application;
@@ -9,6 +10,10 @@ public static class DependencyInjection
 {
     public static WebApplicationBuilder ConfigServices(this WebApplicationBuilder builder)
     {
+        Log.Logger = new LoggerConfiguration()
+                .Enrich.FromLogContext()
+                .WriteTo.Console()
+                .CreateLogger();
 
         // Add services to the container.
         // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
@@ -17,7 +22,8 @@ public static class DependencyInjection
             .AddEndpointsApiExplorer()
             .AddSwaggerGen()
             .AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies())
-            .AddMediatR(config => config.RegisterServicesFromAssembly(Assembly.GetEntryAssembly()));
+            .AddMediatR(config => config.RegisterServicesFromAssembly(Assembly.GetEntryAssembly()))
+            .AddProblemDetails();
         return builder;
     }
 
@@ -35,7 +41,7 @@ public static class DependencyInjection
             catch (Exception ex)
             {
                 var logger = services.GetRequiredService<ILogger<Program>>();
-                logger.LogError(ex, "An error occurred while migrating or initializing the database.");
+                logger.LogError(ex, "An error occurred while initializing the database.");
                 throw;
             }
         }

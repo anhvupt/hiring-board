@@ -10,19 +10,20 @@ public static class GetStages
 {
     public static IEndpointRouteBuilder MapGetStages(this IEndpointRouteBuilder app)
     {
-        app.MapGet("stages", async (IMediator mediator, Query query) => await mediator.Send(query))
-            .Produces(StatusCodes.Status200OK)
-            .Produces(StatusCodes.Status400BadRequest)
-            .Produces(StatusCodes.Status404NotFound);
+        app.MapGet("stages", 
+            async (IMediator mediator, [AsParameters] StageListQuery query) => await mediator.Send(query))
+            .Produces(StatusCodes.Status200OK);
+        
         return app;
     }
 
-    public class Query : IRequest<List<Response>>
+    public class StageListQuery : IRequest<List<StageResponse>>
     {
     }
 
-    public class Response
+    public class StageResponse
     {
+        public int Id { get; set; }
         public string Name { get; set; }
     }
 
@@ -30,19 +31,19 @@ public static class GetStages
     {
         public ResponseProfile()
         {
-            CreateMap<Stage, Response>();
+            CreateMap<Stage, StageResponse>();
         }
     }
 
-    public class Handler(IServiceProvider sp) : AbstractHandler<Query, List<Response>>(sp)
+    public class Handler(IServiceProvider sp) : AbstractHandler<StageListQuery, List<StageResponse>>(sp)
     {
-        public override async Task<List<Response>> Handle(Query request, CancellationToken cancellationToken)
+        public override async Task<List<StageResponse>> Handle(StageListQuery request, CancellationToken cancellationToken)
         {
             var list = await DbSet<Stage>().AsNoTracking()
                 .Where(x => !x.IsDeleted)
-                .ToListAsync();
+                .ToListAsync(cancellationToken);
 
-            return Mapper.Map<List<Response>>(list);
+            return Mapper.Map<List<StageResponse>>(list);
         }
     }
 }

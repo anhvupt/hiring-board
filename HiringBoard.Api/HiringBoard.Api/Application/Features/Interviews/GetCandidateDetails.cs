@@ -2,26 +2,32 @@
 using HiringBoard.Api.Application.Features.Common;
 using HiringBoard.Api.Domain.Entities;
 using MediatR;
+using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Net;
 
 namespace HiringBoard.Api.Application.Features.Interviews;
 public static class GetCandidateDetails
 {
     public static IEndpointRouteBuilder MapGetCandidateDetails(this IEndpointRouteBuilder app)
     {
-        app.MapGet("candidates/{id}", async (IMediator mediator, Query query) => await mediator.Send(query))
-            .Produces(200)
-            .Produces(400)
-            .Produces(404);
+        app.MapGet(
+            "candidates/{id}",
+            async (IMediator mediator, [AsParameters] CandidateDetailsQuery query) =>
+            {
+                return await mediator.Send(query);
+            }).Produces<CandidateDetailsResponse>(StatusCodes.Status200OK)
+            .Produces(StatusCodes.Status404NotFound);
         return app;
     }
 
-    public class Query : IRequest<Response>
+    public class CandidateDetailsQuery : IRequest<CandidateDetailsResponse>
     {
-        public int Id { get; set; }
+        [FromRoute] public int Id { get; set; }
     }
 
-    public class Response
+    public class CandidateDetailsResponse
     {
         public int Id { get; set; }
         public string FirstName { get; set; }
@@ -34,28 +40,28 @@ public static class GetCandidateDetails
         public DateTime InterviewDate { get; set; }
     }
 
-    public class ResponseProfile : Profile
+    public class Profile : AutoMapper.Profile
     {
-        public ResponseProfile()
+        public Profile()
         {
-            CreateMap<Candidate, Response>()
+            CreateMap<Candidate, CandidateDetailsResponse>()
                 .ForMember(x => x.Notes, opt => opt.MapFrom(x => x.Interview.Notes))
                 .ForMember(x => x.InterviewerId, opt => opt.MapFrom(x => x.Interview.InterviewerId))
                 .ForMember(x => x.StageId, opt => opt.MapFrom(x => x.Interview.StageId))
-                .ForMember(x => x.InterviewDate, opt => opt.MapFrom(x => x.Interview.InterviewDate));
+                .ForMember(x => x.InterviewDate, opt => opt.MapFrom(x => x.Interview.InterviewDate.LocalDateTime));
         }
     }
 
-    public class Handler(IServiceProvider sp) : AbstractHandler<Query, Response>(sp)
+    public class Handler(IServiceProvider sp) : AbstractHandler<CandidateDetailsQuery, CandidateDetailsResponse>(sp)
     {
-        public override async Task<Response> Handle(Query request, CancellationToken cancellationToken)
+        public override async Task<CandidateDetailsResponse> Handle(CandidateDetailsQuery request, CancellationToken cancellationToken)
         {
             var entity = await DbSet<Candidate>().AsNoTracking()
                 .Where(x => !x.IsDeleted && x.Id == request.Id)
                 .Include(x => x.Interview)
-                .FirstOrDefaultAsync();
+                .FirstOrDefaultAsync(cancellationToken);
 
-            return Mapper.Map<Response>(entity);
+            return Mapper.Map<CandidateDetailsResponse>(entity);
         }
     }
 }

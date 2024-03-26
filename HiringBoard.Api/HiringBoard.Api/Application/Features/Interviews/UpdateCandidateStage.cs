@@ -1,47 +1,36 @@
-﻿using AutoMapper;
-using HiringBoard.Api.Application.Features.Common;
+﻿using HiringBoard.Api.Application.Features.Common;
 using HiringBoard.Api.Domain.Entities;
 using MediatR;
-using Microsoft.EntityFrameworkCore;
 
 namespace HiringBoard.Api.Application.Features.Interviews;
 public static class UpdateCandidateStage
 {
     public static IEndpointRouteBuilder MapUpdateCandidateStage(this IEndpointRouteBuilder app)
     {
-        app.MapPatch("candidates/stage", async (IMediator mediator, Query query) => await mediator.Send(query))
-            .Produces(StatusCodes.Status200OK)
-            .Produces(StatusCodes.Status400BadRequest)
-            .Produces(StatusCodes.Status404NotFound);
+        app.MapPatch("candidates/stages",
+            async (IMediator mediator, UpdateCandidateStageCommand query) => await mediator.Send(query))
+            .Produces(StatusCodes.Status204NoContent);
         return app;
     }
 
-    public class Query : IRequest<List<Response>>
+    public class UpdateCandidateStageCommand : IRequest<IResult>
     {
+        public List<int> Ids { get; set; }
+        public int StageId { get; set; }
     }
 
-    public class Response
+    public class Handler(IServiceProvider sp) : AbstractHandler<UpdateCandidateStageCommand, IResult>(sp)
     {
-        public string Name { get; set; }
-    }
-
-    public class ResponseProfile : Profile
-    {
-        public ResponseProfile()
+        public override async Task<IResult> Handle(UpdateCandidateStageCommand request, CancellationToken cancellationToken)
         {
-            CreateMap<Stage, Response>();
-        }
-    }
+            var candidates = DbSet<Interview>().Where(x => request.Ids.Contains(x.CandidateId));
+            foreach(var candidate in candidates)
+            {
+                candidate.StageId = request.StageId;
+            }
+            await Uow.SaveChangesAsync(cancellationToken);
 
-    public class Handler(IServiceProvider sp) : AbstractHandler<Query, List<Response>>(sp)
-    {
-        public override async Task<List<Response>> Handle(Query request, CancellationToken cancellationToken)
-        {
-            var list = await DbSet<Stage>().AsNoTracking()
-                .Where(x => !x.IsDeleted)
-                .ToListAsync();
-
-            return Mapper.Map<List<Response>>(list);
+            return TypedResults.NoContent();
         }
     }
 }

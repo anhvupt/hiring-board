@@ -9,13 +9,13 @@ public static class MapEndpointExtension
         app.MapGroup("api/interviews")
             .WithTags("Hiring Api")
             .WithOpenApi()
-            //.MapCreateCandidate()
-            .MapGetCandidates();
-            //.MapGetInterviewers()
-            //.MapGetStages()
-            //.MapGetCandidateDetails()
-            //.MapUpdateCandidateDetails()
-            //.MapUpdateCandidateStage();
+            .MapCreateCandidate()
+            .MapGetCandidates()
+            .MapGetInterviewers()
+            .MapGetStages()
+            .MapGetCandidateDetails()
+            .MapUpdateCandidateDetails()
+            .MapUpdateCandidateStage();
 
         return app;
     }

@@ -3,7 +3,6 @@ using HiringBoard.Api.Application.Common.Extensions;
 using HiringBoard.Api.Application.Features.Common;
 using HiringBoard.Api.Domain.Entities;
 using MediatR;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace HiringBoard.Api.Application.Features.Interviews;
@@ -11,21 +10,22 @@ public static class GetCandidates
 {
     public static IEndpointRouteBuilder MapGetCandidates(this IEndpointRouteBuilder app)
     {
-        app.MapGet("candidates", async (IMediator mediator, [AsParameters] Query query) => await mediator.Send(query))
-            .Produces(StatusCodes.Status200OK)
-            .Produces(StatusCodes.Status400BadRequest)
-            .Produces(StatusCodes.Status404NotFound);
+        app.MapGet("candidates", async (IMediator mediator, [AsParameters] CandidateListQuery query) =>
+            {
+                return await mediator.Send(query);
+            })
+            .Produces(StatusCodes.Status200OK);
         return app;
     }
 
-    public class Query : IRequest<IDictionary<string, List<Response>>>
+    public class CandidateListQuery : IRequest<IDictionary<string, List<CandidateListResponse>>>
     {
         public int? InterviewerId { get; set; }
         public DateTime? InterviewDate { get; set; }
         public string? Search { get; set; }
     }
 
-    public class Response
+    public class CandidateListResponse
     {
         public int Id { get; set; }
         public string Name { get; set; }
@@ -36,11 +36,11 @@ public static class GetCandidates
         public DateTime InterviewDate { get; set; }
     }
 
-    public class ResponseProfile : Profile
+    public class Profile : AutoMapper.Profile
     {
-        public ResponseProfile()
+        public Profile()
         {
-            CreateMap<Interview, Response>()
+            CreateMap<Interview, CandidateListResponse>()
                 .ForMember(x => x.Name, opt => opt.MapFrom(x => $"{x.Candidate.FirstName} {x.Candidate.LastName}"))
                 .ForMember(x => x.Email, opt => opt.MapFrom(x => x.Candidate.Email))
                 .ForMember(x => x.Phone, opt => opt.MapFrom(x => x.Candidate.Phone))
@@ -50,9 +50,9 @@ public static class GetCandidates
         }
     }
 
-    public class Handler(IServiceProvider sp) : AbstractHandler<Query, IDictionary<string, List<Response>>>(sp)
+    public class Handler(IServiceProvider sp) : AbstractHandler<CandidateListQuery, IDictionary<string, List<CandidateListResponse>>>(sp)
     {
-        public override async Task<IDictionary<string, List<Response>>> Handle(Query request, CancellationToken cancellationToken)
+        public override async Task<IDictionary<string, List<CandidateListResponse>>> Handle(CandidateListQuery request, CancellationToken cancellationToken)
         {
             var list = await DbSet<Interview>().AsNoTracking()
                 .Where(x => !x.IsDeleted)
@@ -60,7 +60,7 @@ public static class GetCandidates
                 .Include(x => x.Interviewer)
                 .Include(x => x.Stage)
                 .WhereIf(!string.IsNullOrWhiteSpace(request.Search),
-                    x => x.Candidate.FirstName.Contains(request.Search) 
+                    x => x.Candidate.FirstName.Contains(request.Search)
                     || x.Candidate.LastName.Contains(request.Search))
                 .WhereIf(request.InterviewerId is not null and > 0,
                     x => x.Interviewer.Id == request.InterviewerId)
@@ -69,7 +69,7 @@ public static class GetCandidates
                 .GroupBy(x => x.Stage.Name)
                 .ToDictionaryAsync(x => x.Key, x => x.ToList(), cancellationToken);
 
-            return Mapper.Map<Dictionary<string, List<Response>>>(list);
+            return Mapper.Map<Dictionary<string, List<CandidateListResponse>>>(list);
         }
     }
 }

@@ -2,7 +2,7 @@
 using HiringBoard.Api.Application.Features.Common;
 using HiringBoard.Api.Domain.Entities;
 using MediatR;
-using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Mvc;
 
 namespace HiringBoard.Api.Application.Features.Interviews;
 
@@ -10,39 +10,56 @@ public static class UpdateCandidateDetails
 {
     public static IEndpointRouteBuilder MapUpdateCandidateDetails(this IEndpointRouteBuilder app)
     {
-        app.MapPut("candidates/{id}", async (IMediator mediator, Command query) => await mediator.Send(query))
-            .Produces(StatusCodes.Status200OK)
-            .Produces(StatusCodes.Status400BadRequest)
-            .Produces(StatusCodes.Status404NotFound);
+        app.MapPut("candidates/{id}",
+            async (IMediator mediator, [FromRoute] int Id, [FromBody] UpdateCandidateDetailsCommand query) => await mediator.Send(query))
+            .Produces(StatusCodes.Status204NoContent);
+
         return app;
     }
 
-    public class Command : IRequest<List<Response>>
+    public class UpdateCandidateDetailsCommand : IRequest<IResult>
     {
+        [FromRoute] public int Id { get; set; }
+        public string FirstName { get; set; }
+        public string LastName { get; set; }
+        public string Email { get; set; }
+        public string Phone { get; set; }
+        public string Notes { get; set; }
+        public int InterviewerId { get; set; }
+        public int StageId { get; set; }
+        public DateTime InterviewDate { get; set; }
     }
 
-    public class Response
+    public class Profile : AutoMapper.Profile
     {
-        public string Name { get; set; }
-    }
-
-    public class ResponseProfile : Profile
-    {
-        public ResponseProfile()
+        public Profile()
         {
-            CreateMap<Stage, Response>();
+            CreateMap<UpdateCandidateDetailsCommand, Candidate>()
+                .AfterMap((src, target) =>
+                {
+                    target.Interview = new Interview
+                    {
+                        Notes = src.Notes,
+                        InterviewerId = src.InterviewerId,
+                        StageId = src.StageId
+                    };
+                });
         }
     }
 
-    public class Handler(IServiceProvider sp) : AbstractHandler<Command, List<Response>>(sp)
+    public class Handler(IServiceProvider sp) : AbstractHandler<UpdateCandidateDetailsCommand, IResult>(sp)
     {
-        public override async Task<List<Response>> Handle(Command request, CancellationToken cancellationToken)
+        public override async Task<IResult> Handle(UpdateCandidateDetailsCommand request, CancellationToken cancellationToken)
         {
-            var list = await DbSet<Stage>().AsNoTracking()
-                .Where(x => !x.IsDeleted)
-                .ToListAsync();
+            var entity = await DbSet<Candidate>().FindAsync(request.Id, cancellationToken);
+            if (entity == null)
+            {
+                return TypedResults.NotFound();
+            }
+            Mapper.Map(request, entity);
+            await Uow.SaveChangesAsync(cancellationToken);
 
-            return Mapper.Map<List<Response>>(list);
+            return TypedResults.NoContent();
         }
     }
 }

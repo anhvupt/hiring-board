@@ -76,7 +76,6 @@ namespace HiringBoard.Api.Migrations
                     CandidateId = table.Column<int>(type: "int", nullable: false),
                     InterviewerId = table.Column<int>(type: "int", nullable: true),
                     StageId = table.Column<int>(type: "int", nullable: true),
-                    CandidateId1 = table.Column<int>(type: "int", nullable: true),
                     IsDeleted = table.Column<bool>(type: "tinyint(1)", nullable: false)
                 },
                 constraints: table =>
@@ -88,11 +87,6 @@ namespace HiringBoard.Api.Migrations
                         principalTable: "Candidates",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_Interviews_Candidates_CandidateId1",
-                        column: x => x.CandidateId1,
-                        principalTable: "Candidates",
-                        principalColumn: "Id");
                     table.ForeignKey(
                         name: "FK_Interviews_Interviewers_InterviewerId",
                         column: x => x.InterviewerId,
@@ -113,16 +107,16 @@ namespace HiringBoard.Api.Migrations
                 columns: new[] { "Id", "Email", "FirstName", "IsDeleted", "LastName", "Phone" },
                 values: new object[,]
                 {
-                    { 1, "mireya@champlinrodriguez.name", "Nadia", false, "Altenwerth", "(074)830-2675 x18727" },
-                    { 2, "cedrick@durgan.uk", "Cary", false, "Franecki", "034.776.1279 x075" },
-                    { 3, "courtney.johnson@nicolas.name", "Kendrick", false, "Hahn", "1-592-952-8665 x3576" },
-                    { 4, "yadira@labadiefadel.biz", "Carli", false, "Roob", "500-436-4262 x84315" },
-                    { 5, "dominic_kub@heathcote.ca", "Jacques", false, "Abernathy", "(696)465-2404 x3845" },
-                    { 6, "casper@jewess.uk", "Loraine", false, "Weber", "(365)554-0101 x0252" },
-                    { 7, "ophelia.rice@huelsbergstrom.uk", "Philip", false, "Hackett", "831-711-9989" },
-                    { 8, "elena@beckerdonnelly.co.uk", "Margarett", false, "Robel", "(125)242-3587" },
-                    { 9, "kaela@wilderman.com", "Jewel", false, "Kihn", "260-893-4757" },
-                    { 10, "michale@kassulkeokon.name", "Joy", false, "Osinski", "999-247-8060 x002" }
+                    { 1, "josiah.stokes@cassinbrakus.co.uk", "Carmine", false, "Lakin", "399.443.6655" },
+                    { 2, "melvin_ward@swaniawski.info", "Shaylee", false, "Mitchell", "1-190-432-7848 x2744" },
+                    { 3, "demarcus_hoeger@cruickshank.com", "Samara", false, "Feeney", "598-173-8221 x35450" },
+                    { 4, "josiah.schaefer@greenfelderbrekke.ca", "Nayeli", false, "Wilkinson", "1-307-834-3481 x03372" },
+                    { 5, "jamil_davis@beier.uk", "Stewart", false, "Bartoletti", "(969)416-1116" },
+                    { 6, "moshe@ornschaden.ca", "Vinnie", false, "Luettgen", "861.001.4966" },
+                    { 7, "phyllis_bayer@heaney.ca", "Jude", false, "Cormier", "(208)624-6540" },
+                    { 8, "ubaldo_kunze@abbott.info", "Francesco", false, "Bruen", "838.750.0933 x07702" },
+                    { 9, "elizabeth_kiehn@kundehilpert.us", "Joaquin", false, "Gerlach", "(406)500-2983" },
+                    { 10, "floy_eichmann@brakusbuckridge.uk", "Roxane", false, "Trantow", "414-429-4374 x966" }
                 });
 
             migrationBuilder.InsertData(
@@ -130,9 +124,9 @@ namespace HiringBoard.Api.Migrations
                 columns: new[] { "Id", "IsDeleted", "Name" },
                 values: new object[,]
                 {
-                    { 1, false, "Camron Klein" },
-                    { 2, false, "Miss Hillary Darby Gusikowski" },
-                    { 3, false, "Javier Gutmann" }
+                    { 1, false, "Prof. Elsie Muller" },
+                    { 2, false, "Prof. Ladarius Boehm" },
+                    { 3, false, "Nakia Baumbach" }
                 });
 
             migrationBuilder.InsertData(
@@ -148,19 +142,19 @@ namespace HiringBoard.Api.Migrations
 
             migrationBuilder.InsertData(
                 table: "Interviews",
-                columns: new[] { "Id", "CandidateId", "CandidateId1", "InterviewDate", "InterviewerId", "IsDeleted", "Notes", "StageId" },
+                columns: new[] { "Id", "CandidateId", "InterviewDate", "InterviewerId", "IsDeleted", "Notes", "StageId" },
                 values: new object[,]
                 {
-                    { 1, 1, null, new DateTimeOffset(new DateTime(2024, 3, 24, 22, 7, 1, 770, DateTimeKind.Unspecified).AddTicks(5623), new TimeSpan(0, 7, 0, 0, 0)), 1, false, "Rem est qui incidunt.", 2 },
-                    { 2, 2, null, new DateTimeOffset(new DateTime(2024, 3, 24, 22, 7, 1, 770, DateTimeKind.Unspecified).AddTicks(6833), new TimeSpan(0, 7, 0, 0, 0)), 1, false, "Mollitia optio quod excepturi perspiciatis nihil qui.", 1 },
-                    { 3, 3, null, new DateTimeOffset(new DateTime(2024, 3, 24, 22, 7, 1, 770, DateTimeKind.Unspecified).AddTicks(8299), new TimeSpan(0, 7, 0, 0, 0)), 2, false, "Esse eos dolor sint magnam sapiente consectetur sed aperiam laboriosam.", 3 },
-                    { 4, 4, null, new DateTimeOffset(new DateTime(2024, 3, 24, 22, 7, 1, 771, DateTimeKind.Unspecified).AddTicks(547), new TimeSpan(0, 7, 0, 0, 0)), 1, false, "Aliquid placeat omnis repellendus eos dolor tempora itaque ut delectus.", 1 },
-                    { 5, 5, null, new DateTimeOffset(new DateTime(2024, 3, 24, 22, 7, 1, 771, DateTimeKind.Unspecified).AddTicks(2628), new TimeSpan(0, 7, 0, 0, 0)), 2, false, "Saepe unde sit et consequuntur.", 1 },
-                    { 6, 6, null, new DateTimeOffset(new DateTime(2024, 3, 24, 22, 7, 1, 771, DateTimeKind.Unspecified).AddTicks(3725), new TimeSpan(0, 7, 0, 0, 0)), 2, false, "Quam dolorem quis recusandae illo est accusantium.", 3 },
-                    { 7, 7, null, new DateTimeOffset(new DateTime(2024, 3, 24, 22, 7, 1, 771, DateTimeKind.Unspecified).AddTicks(5263), new TimeSpan(0, 7, 0, 0, 0)), 2, false, "Quia eos ab vitae repellendus sint itaque.", 2 },
-                    { 8, 8, null, new DateTimeOffset(new DateTime(2024, 3, 24, 22, 7, 1, 771, DateTimeKind.Unspecified).AddTicks(6678), new TimeSpan(0, 7, 0, 0, 0)), 2, false, "Autem quia est consequatur non qui maiores necessitatibus nisi.", 3 },
-                    { 9, 9, null, new DateTimeOffset(new DateTime(2024, 3, 24, 22, 7, 1, 771, DateTimeKind.Unspecified).AddTicks(8576), new TimeSpan(0, 7, 0, 0, 0)), 2, false, "Quasi eligendi eligendi qui excepturi assumenda animi quibusdam voluptate dolorem.", 2 },
-                    { 10, 10, null, new DateTimeOffset(new DateTime(2024, 3, 24, 22, 7, 1, 772, DateTimeKind.Unspecified).AddTicks(2402), new TimeSpan(0, 7, 0, 0, 0)), 2, false, "Facilis aut voluptatum eum inventore odit pariatur iste.", 3 }
+                    { 1, 1, new DateTimeOffset(new DateTime(2024, 3, 26, 21, 15, 3, 799, DateTimeKind.Unspecified).AddTicks(5064), new TimeSpan(0, 7, 0, 0, 0)), 1, false, "Ullam architecto porro quisquam facilis et quia ut eum.", 2 },
+                    { 2, 2, new DateTimeOffset(new DateTime(2024, 3, 26, 21, 15, 3, 799, DateTimeKind.Unspecified).AddTicks(6712), new TimeSpan(0, 7, 0, 0, 0)), 2, false, "Amet omnis tempora animi similique sint.", 2 },
+                    { 3, 3, new DateTimeOffset(new DateTime(2024, 3, 26, 21, 15, 3, 799, DateTimeKind.Unspecified).AddTicks(7642), new TimeSpan(0, 7, 0, 0, 0)), 1, false, "Similique repellat corrupti unde architecto expedita et non.", 1 },
+                    { 4, 4, new DateTimeOffset(new DateTime(2024, 3, 26, 21, 15, 3, 799, DateTimeKind.Unspecified).AddTicks(8828), new TimeSpan(0, 7, 0, 0, 0)), 1, false, "Voluptatem praesentium maxime omnis perspiciatis quos sit.", 1 },
+                    { 5, 5, new DateTimeOffset(new DateTime(2024, 3, 26, 21, 15, 3, 800, DateTimeKind.Unspecified).AddTicks(5), new TimeSpan(0, 7, 0, 0, 0)), 2, false, "Amet et aliquid perspiciatis nostrum voluptatem.", 1 },
+                    { 6, 6, new DateTimeOffset(new DateTime(2024, 3, 26, 21, 15, 3, 800, DateTimeKind.Unspecified).AddTicks(914), new TimeSpan(0, 7, 0, 0, 0)), 2, false, "Quia ab omnis fugiat vel optio impedit sit.", 1 },
+                    { 7, 7, new DateTimeOffset(new DateTime(2024, 3, 26, 21, 15, 3, 800, DateTimeKind.Unspecified).AddTicks(2149), new TimeSpan(0, 7, 0, 0, 0)), 2, false, "Quo animi aliquam nam autem.", 1 },
+                    { 8, 8, new DateTimeOffset(new DateTime(2024, 3, 26, 21, 15, 3, 800, DateTimeKind.Unspecified).AddTicks(2910), new TimeSpan(0, 7, 0, 0, 0)), 1, false, "Saepe illum provident voluptatibus rerum.", 2 },
+                    { 9, 9, new DateTimeOffset(new DateTime(2024, 3, 26, 21, 15, 3, 800, DateTimeKind.Unspecified).AddTicks(3699), new TimeSpan(0, 7, 0, 0, 0)), 1, false, "Cupiditate omnis impedit vitae beatae assumenda consectetur eius.", 3 },
+                    { 10, 10, new DateTimeOffset(new DateTime(2024, 3, 26, 21, 15, 3, 800, DateTimeKind.Unspecified).AddTicks(5002), new TimeSpan(0, 7, 0, 0, 0)), 1, false, "Tenetur aliquam iure vel numquam officia consequatur sit.", 2 }
                 });
 
             migrationBuilder.CreateIndex(
@@ -177,12 +171,6 @@ namespace HiringBoard.Api.Migrations
                 name: "IX_Interviews_CandidateId",
                 table: "Interviews",
                 column: "CandidateId",
-                unique: true);
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Interviews_CandidateId1",
-                table: "Interviews",
-                column: "CandidateId1",
                 unique: true);
 
             migrationBuilder.CreateIndex(
