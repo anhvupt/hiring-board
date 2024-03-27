@@ -18,7 +18,7 @@ public static class GetCandidates
         return app;
     }
 
-    public class CandidateListQuery : IRequest<IDictionary<string, List<CandidateListResponse>>>
+    public class CandidateListQuery : IRequest<IDictionary<int, List<CandidateListResponse>>>
     {
         public int? InterviewerId { get; set; }
         public DateTime? InterviewDate { get; set; }
@@ -50,9 +50,9 @@ public static class GetCandidates
         }
     }
 
-    public class Handler(IServiceProvider sp) : AbstractHandler<CandidateListQuery, IDictionary<string, List<CandidateListResponse>>>(sp)
+    public class Handler(IServiceProvider sp) : AbstractHandler<CandidateListQuery, IDictionary<int, List<CandidateListResponse>>>(sp)
     {
-        public override async Task<IDictionary<string, List<CandidateListResponse>>> Handle(CandidateListQuery request, CancellationToken cancellationToken)
+        public override async Task<IDictionary<int, List<CandidateListResponse>>> Handle(CandidateListQuery request, CancellationToken cancellationToken)
         {
             var list = await DbSet<Interview>().AsNoTracking()
                 .Where(x => !x.IsDeleted)
@@ -66,10 +66,10 @@ public static class GetCandidates
                     x => x.Interviewer.Id == request.InterviewerId)
                 .WhereIf(request.InterviewDate is not null,
                     x => x.InterviewDate.Date == ((DateTime)request.InterviewDate).ToUniversalTime().Date)
-                .GroupBy(x => x.Stage.Name)
+                .GroupBy(x => x.Stage.Id)
                 .ToDictionaryAsync(x => x.Key, x => x.ToList(), cancellationToken);
 
-            return Mapper.Map<Dictionary<string, List<CandidateListResponse>>>(list);
+            return Mapper.Map<Dictionary<int, List<CandidateListResponse>>>(list);
         }
     }
 }

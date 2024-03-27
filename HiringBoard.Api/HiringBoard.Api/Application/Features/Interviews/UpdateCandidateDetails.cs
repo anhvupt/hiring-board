@@ -1,8 +1,10 @@
 ﻿using AutoMapper;
+using HiringBoard.Api.Application.Common.Constants;
 using HiringBoard.Api.Application.Features.Common;
 using HiringBoard.Api.Domain.Entities;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using System.ComponentModel.DataAnnotations;
 
 namespace HiringBoard.Api.Application.Features.Interviews;
 
@@ -20,12 +22,19 @@ public static class UpdateCandidateDetails
     public class UpdateCandidateDetailsCommand : IRequest<IResult>
     {
         [FromRoute] public int Id { get; set; }
+        [MaxLength(100)]
         public string FirstName { get; set; }
+        [MaxLength(100)]
         public string LastName { get; set; }
+        [RegularExpression(RegExPatterns.IsEmail)]
         public string Email { get; set; }
+        [RegularExpression(RegExPatterns.IsPhoneNumber)]
         public string Phone { get; set; }
+        [MaxLength(500)]
         public string Notes { get; set; }
+        [Range(1, int.MaxValue)]
         public int InterviewerId { get; set; }
+        [Range(1, int.MaxValue)]
         public int StageId { get; set; }
         public DateTime InterviewDate { get; set; }
     }

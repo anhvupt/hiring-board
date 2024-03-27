@@ -1,6 +1,7 @@
 ﻿using HiringBoard.Api.Application.Features.Common;
 using HiringBoard.Api.Domain.Entities;
 using MediatR;
+using System.ComponentModel.DataAnnotations;
 
 namespace HiringBoard.Api.Application.Features.Interviews;
 public static class UpdateCandidateStage
@@ -16,6 +17,7 @@ public static class UpdateCandidateStage
     public class UpdateCandidateStageCommand : IRequest<IResult>
     {
         public List<int> Ids { get; set; }
+        [Range(1, int.MaxValue)]
         public int StageId { get; set; }
     }
 
