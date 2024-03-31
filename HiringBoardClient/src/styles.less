@@ -1,0 +1,35 @@
+/* You can add global styles to this file, and also import other style files */
+@import '@taiga-ui/core/styles/taiga-ui-theme.less';
+@import '@taiga-ui/core/styles/taiga-ui-fonts.less';
+@import '@taiga-ui/styles/taiga-ui-global.less';
+
+@import '@taiga-ui/core/styles/taiga-ui-local.less';
+@import '@taiga-ui/styles/basic/keyframes.less';
+@import '@taiga-ui/styles/basic/main.less';
+@import '@taiga-ui/styles/markup/tui-container.less';
+@import '@taiga-ui/styles/markup/tui-form.less';
+@import '@taiga-ui/styles/markup/tui-island.less';
+@import '@taiga-ui/styles/markup/tui-list.less';
+@import '@taiga-ui/styles/markup/tui-mobile-only.less';
+@import '@taiga-ui/styles/markup/tui-required.less';
+@import '@taiga-ui/styles/markup/tui-row.less';
+@import '@taiga-ui/styles/markup/tui-skeleton.less';
+@import '@taiga-ui/styles/markup/tui-space.less';
+@import '@taiga-ui/styles/markup/tui-table.less';
+@import '@taiga-ui/styles/markup/tui-text.less';
+
+// Define color variables
+:root {
+  --primary-default: #063b27;
+  --primary-light: #00854d;
+  --accent-default: #cfff92;
+  --accent-light: #ddffb2;
+  --accent-dark: #b3e675;
+}
+
+[tuiWrapper][data-appearance='primary-button'] {
+  background: var(--primary-light);
+  color: #fff;
+  white-space: nowrap; // Prevent the button text from wrapping
+  border: 0;
+}

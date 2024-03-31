@@ -1,0 +1,30 @@
+<div
+  class="flex flex-col flex-grow items-start justify-center bg-gray-200 h-full px-2 rounded"
+>
+  <h2>{{ column.name }}</h2>
+  <div
+    cdkDropList
+    [id]="column.id"
+    [cdkDropListData]="list"
+    [cdkDropListConnectedTo]="connectedIds"
+    class="flex flex-col gap-2 w-full"
+    (cdkDropListDropped)="drop($event)"
+  >
+    @for (item of list; track item) {
+    <div cdkDrag (cdkDragStarted)="dragStarted($event)">
+      <app-candidate-card [candidate]="item" />
+      @if(selectedItemsCount > 1){
+      <span *cdkDragPreview>{{ selectedItemsCount + ' selected items' }}</span>
+      }
+    </div>
+    }
+  </div>
+  <button
+    appearance="flat"
+    tuiButton
+    type="button"
+    class="tui-space_right-3 tui-space_bottom-3 w-full border border-primary border-dashed rounded-lg h-10 mt-4 hover:bg-accent-light transition-colors"
+  >
+    Add a card
+  </button>
+</div>

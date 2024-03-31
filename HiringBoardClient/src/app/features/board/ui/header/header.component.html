@@ -1,0 +1,40 @@
+<h1 class="tui-text_h6 text-primary">Hiring board</h1>
+<div class="py-4">
+  <div class="flex items-start lg:items-center justify-between">
+    <div class="flex items-center w-full justify-between gap-2">
+      <tui-input
+        class="w-full lg:w-1/2"
+        [(ngModel)]="text"
+        tuiTextfieldSize="m"
+        tuiAutofocus
+        [tuiTextfieldLabelOutside]="true"
+      >
+        Search...
+        <input tuiTextfield />
+      </tui-input>
+      <button tuiButton appearance="primary-button" size="m" type="button">
+        <a
+          class="h-full w-full flex items-center"
+          [routerLink]="'candidate/create'"
+          >Add a card</a
+        >
+      </button>
+    </div>
+  </div>
+  <div class="flex lg:w-1/2 gap-2 mt-2 items-center lg:items-start">
+    <tui-select
+      class="flex-1"
+      [(ngModel)]="text"
+      tuiTextfieldSize="m"
+      placeholder="Select option..."
+      [tuiTextfieldLabelOutside]="true"
+    ></tui-select>
+    <tui-select
+      class="flex-1"
+      [(ngModel)]="text"
+      tuiTextfieldSize="m"
+      placeholder="Select option..."
+      [tuiTextfieldLabelOutside]="true"
+    ></tui-select>
+  </div>
+</div>
