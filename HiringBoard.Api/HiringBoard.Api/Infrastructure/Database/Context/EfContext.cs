@@ -94,7 +94,8 @@ public class EfContext(DbContextOptions options, IConfiguration config) : DbCont
             {
                 Id = id,
                 CandidateId = id,
-                InterviewDate = DateTime.Now,
+                CreatedDate = DateTime.Now,
+                Position = Faker.Company.Name(),
                 Notes = string.Join(" ", Faker.Lorem.Sentences(1).ToList()),
                 IsDeleted = false,
                 StageId = random.Next(1, 4),

@@ -21,7 +21,7 @@ public static class GetCandidates
     public class CandidateListQuery : IRequest<IDictionary<int, List<CandidateListResponse>>>
     {
         public int? InterviewerId { get; set; }
-        public DateTime? InterviewDate { get; set; }
+        public DateTime? CreatedDate { get; set; }
         public string? Search { get; set; }
     }
 
@@ -29,11 +29,12 @@ public static class GetCandidates
     {
         public int Id { get; set; }
         public string Name { get; set; }
+        public string Position { get; set; }
         public string Email { get; set; }
         public string Phone { get; set; }
         public string Notes { get; set; }
         public string Interviewer { get; set; }
-        public DateTime InterviewDate { get; set; }
+        public DateTime CreatedDate { get; set; }
     }
 
     public class Profile : AutoMapper.Profile
@@ -46,7 +47,7 @@ public static class GetCandidates
                 .ForMember(x => x.Phone, opt => opt.MapFrom(x => x.Candidate.Phone))
                 .ForMember(x => x.Notes, opt => opt.MapFrom(x => x.Notes))
                 .ForMember(x => x.Interviewer, opt => opt.MapFrom(x => x.Interviewer.Name))
-                .ForMember(x => x.InterviewDate, opt => opt.MapFrom(x => x.InterviewDate.LocalDateTime));
+                .ForMember(x => x.CreatedDate, opt => opt.MapFrom(x => x.CreatedDate.LocalDateTime));
         }
     }
 
@@ -64,8 +65,8 @@ public static class GetCandidates
                     || x.Candidate.LastName.Contains(request.Search))
                 .WhereIf(request.InterviewerId is not null and > 0,
                     x => x.Interviewer.Id == request.InterviewerId)
-                .WhereIf(request.InterviewDate is not null,
-                    x => x.InterviewDate.Date == ((DateTime)request.InterviewDate).ToUniversalTime().Date)
+                .WhereIf(request.CreatedDate is not null,
+                    x => x.CreatedDate.Date == ((DateTime)request.CreatedDate).ToUniversalTime().Date)
                 .GroupBy(x => x.Stage.Id)
                 .ToDictionaryAsync(x => x.Key, x => x.ToList(), cancellationToken);
 

@@ -24,6 +24,8 @@ public static class CreateCandidate
         public string FirstName { get; set; }
         [MaxLength(100)]
         public string LastName { get; set; }
+        [MaxLength(200)]
+        public string Position { get; set; }
         [RegularExpression(RegExPatterns.IsEmail)]
         public string Email { get; set; }
         [RegularExpression(RegExPatterns.IsPhoneNumber)]
@@ -51,6 +53,7 @@ public static class CreateCandidate
                 {
                     target.Interview = new Interview
                     {
+                        Position = src.Position,
                         Notes = src.Notes,
                         InterviewerId = src.InterviewerId,
                         StageId = src.StageId

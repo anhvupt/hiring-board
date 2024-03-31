@@ -32,12 +32,13 @@ public static class GetCandidateDetails
         public int Id { get; set; }
         public string FirstName { get; set; }
         public string LastName { get; set; }
+        public string Position { get; set; }
         public string Email { get; set; }
         public string Phone { get; set; }
         public string Notes { get; set; }
         public int InterviewerId { get; set; }
         public int StageId { get; set; }
-        public DateTime InterviewDate { get; set; }
+        public DateTime CreatedDate { get; set; }
     }
 
     public class Profile : AutoMapper.Profile
@@ -46,9 +47,10 @@ public static class GetCandidateDetails
         {
             CreateMap<Candidate, CandidateDetailsResponse>()
                 .ForMember(x => x.Notes, opt => opt.MapFrom(x => x.Interview.Notes))
+                .ForMember(x => x.Position, opt => opt.MapFrom(x => x.Interview.Position))
                 .ForMember(x => x.InterviewerId, opt => opt.MapFrom(x => x.Interview.InterviewerId))
                 .ForMember(x => x.StageId, opt => opt.MapFrom(x => x.Interview.StageId))
-                .ForMember(x => x.InterviewDate, opt => opt.MapFrom(x => x.Interview.InterviewDate.LocalDateTime));
+                .ForMember(x => x.CreatedDate, opt => opt.MapFrom(x => x.Interview.CreatedDate.LocalDateTime));
         }
     }
 

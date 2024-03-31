@@ -36,7 +36,7 @@ public static class UpdateCandidateDetails
         public int InterviewerId { get; set; }
         [Range(1, int.MaxValue)]
         public int StageId { get; set; }
-        public DateTime InterviewDate { get; set; }
+        public DateTime CreatedDate { get; set; }
     }
 
     public class Profile : AutoMapper.Profile
@@ -50,7 +50,8 @@ public static class UpdateCandidateDetails
                     {
                         Notes = src.Notes,
                         InterviewerId = src.InterviewerId,
-                        StageId = src.StageId
+                        StageId = src.StageId,
+                        CreatedDate = src.CreatedDate,
                     };
                 });
         }
