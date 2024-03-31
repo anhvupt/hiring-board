@@ -15,11 +15,12 @@ export interface Interviewer {
 export interface CandidateBoardView {
   id: number;
   name: string;
-  email?: string;
-  phone?: string;
-  notes?: string;
-  interviewer?: string;
-  interviewDate?: Date;
+  position: string;
+  email: string;
+  phone: string;
+  notes: string;
+  interviewer: string;
+  createdDate: Date;
   selected: boolean;
 }
 
@@ -27,12 +28,13 @@ export interface Candidate {
   id: number;
   firstName: string;
   lastName: string;
+  position: string;
   email: string;
   phone: string;
   notes: string;
   interviewerId: string;
   stageId: string;
-  interviewDate: Date;
+  createdDate: Date;
 }
 
 export interface StageUpdate {

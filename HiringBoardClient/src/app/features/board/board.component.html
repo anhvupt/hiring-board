@@ -1,17 +1,18 @@
-<app-header />
-
-<div
-  *ngIf="(vm$ | ngrxPush)?.stages as stages"
-  class="flex flex-row items-start gap-2 mt-4"
->
-  @for (stage of stages; track $index) {
-  <div class="flex-1">
-    <app-board-column
-      [column]="stage"
-      [list]="(getList(stage.id) | ngrxPush) || []"
-      [connectedIds]="(getConnectedIds(stage.id) | ngrxPush) ?? []"
-      (itemsDropped)="drop($event)"
-    />
+<div class="py-4">
+  <app-header />
+  <div
+    *ngIf="(vm$ | ngrxPush)?.stages as stages"
+    class="flex flex-row items-start gap-2 overflow-auto"
+  >
+    @for (stage of stages; track $index) {
+    <div class="flex-1 min-w-60">
+      <app-board-column
+        [column]="stage"
+        [list]="(getList(stage.id) | ngrxPush) || []"
+        [connectedIds]="(getConnectedIds(stage.id) | ngrxPush) ?? []"
+        (itemsDropped)="drop($event)"
+      />
+    </div>
+    }
   </div>
-  }
 </div>

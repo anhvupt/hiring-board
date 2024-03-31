@@ -20,7 +20,15 @@ import {
   TuiTextfieldControllerModule
 } from '@taiga-ui/core';
 import { TuiSelectModule } from '@taiga-ui/kit';
-import { catchError, map, of, pipe, switchMap, tap } from 'rxjs';
+import {
+  catchError,
+  map,
+  of,
+  pipe,
+  switchMap,
+  tap,
+  withLatestFrom
+} from 'rxjs';
 import { Board, CandidateBoardView } from '~/data-access/app.model';
 import { interviewerFeature } from '~/store/features/interviewer.feature';
 import { stageFeature } from '~/store/features/stages.feature';
@@ -57,7 +65,6 @@ export class BoardComponent {
     inject<ComponentStore<typeof initialState>>(ComponentStore);
   private readonly store = inject(Store);
   private readonly appService = inject(AppService);
-  isMultiMoving = false;
 
   vm$ = this.cStore.select(
     this.cStore.state$,
@@ -117,6 +124,12 @@ export class BoardComponent {
         });
         // Deselect items after moving
       } else {
+        console.log(
+          previousContainerData,
+          containerData,
+          event.previousIndex,
+          event.currentIndex
+        );
         // Move single item logic if no items are selected
         transferArrayItem(
           previousContainerData,
@@ -127,7 +140,7 @@ export class BoardComponent {
       }
     }
 
-    this.isMultiMoving = false;
+    // this.isMultiMoving = false;
     // [Array.from(this.lists.values())].forEach((list) =>
     //   list.forEach((item) => (item.selected = false))
     // );
@@ -136,7 +149,14 @@ export class BoardComponent {
   private loadBoard = this.cStore.effect<object>(
     pipe(
       switchMap(() => this.appService.getCandidates()),
-      tap((candidates) => this.cStore.patchState({ candidates })),
+      withLatestFrom(this.store.select(stageFeature.selectData)),
+      tap(([candidates, stages]) => {
+        const resolved = stages.reduce(
+          (acc, cur) => ({ ...acc, [`${cur.id}`]: candidates[cur.id] ?? [] }),
+          {}
+        );
+        this.cStore.patchState({ candidates: resolved });
+      }),
       catchError((error) => {
         console.error(error);
         return of(error);

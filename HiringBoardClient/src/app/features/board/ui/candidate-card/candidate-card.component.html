@@ -1,14 +1,34 @@
 <div
   tuiCardMedium
   tuiSurface="elevated"
-  class="bg-white border border-primary rounded-lg drop-shadow-lg px-4 py-6 w-full cursor-move"
+  class="bg-white border border-primary rounded-lg drop-shadow-lg flex flex-col gap-2 px-4 py-6 w-full cursor-move"
 >
-  <span tuiSubtitle class="tui-text_body-l2 font-bold text-primary">{{
-    candidate.name
-  }}</span>
-  <!-- <span
-          class="example-box"
-          [ngClass]="isMultiMoving && item.selected ? 'opacity-0' : ''"
-          >{{ item.name }}</span
-        > -->
+  <div class="flex flex-col gap-1">
+    <div class="flex items-center justify-between">
+      <p tuiSubtitle class="tui-text_body-l font-bold text-primary">
+        <a class="h-full w-full" [routerLink]="['candidate', candidate.id]">{{
+          candidate.name
+        }}</a>
+      </p>
+      <span class="cursor-pointer">...</span>
+    </div>
+    <p class="tui-text_body-s2 text-gray-500">{{ candidate.position }}</p>
+    <p class="tui-text_body-s leading-relaxed">{{ candidate.notes }}</p>
+  </div>
+  <div
+    tuiCardMedium
+    tuiSurface="elevated"
+    class="bg-gray-100 rounded flex flex-col items-center justify-center p-4"
+  >
+    <p>{{ candidate.email }}</p>
+    <p>{{ candidate.phone }}</p>
+  </div>
+  <div class="flex items-center justify-between mt-2">
+    <tui-badge
+      status="custom"
+      [value]="candidate.createdDate | date : 'mediumDate'"
+      class="tui-space_horizontal-2 tui-space_vertical-2 tui-text_body-s2 m-0"
+    ></tui-badge>
+    <span class="underline">{{ candidate.interviewer }}</span>
+  </div>
 </div>

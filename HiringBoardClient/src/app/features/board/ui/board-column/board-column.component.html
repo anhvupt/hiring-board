@@ -1,7 +1,7 @@
 <div
   class="flex flex-col flex-grow items-start justify-center bg-gray-200 h-full p-2 rounded"
 >
-  <h2 class="tui-text_body-l font-semibold mb-2 text-gray-500">
+  <h2 class="tui-text_body-l2 font-semibold mb-2 text-gray-500">
     {{ column.name }}
   </h2>
   <div
@@ -9,12 +9,16 @@
     [id]="column.id.toString()"
     [cdkDropListData]="list"
     [cdkDropListConnectedTo]="connectedIds"
-    class="flex flex-col gap-2 w-full min-h-10"
     (cdkDropListDropped)="drop($event)"
+    class="flex flex-col gap-2 w-full min-h-8"
   >
     @for (item of list; track item) {
     <div cdkDrag (cdkDragStarted)="dragStarted($event)">
       <app-candidate-card [candidate]="item" />
+      <span
+        *cdkDragPlaceholder
+        class="bg-accent-light border border-primary border-dashed transition min-h-32 rounded-lg"
+      ></span>
       @if(selectedItemsCount > 1){
       <span *cdkDragPreview>{{ selectedItemsCount + ' selected items' }}</span>
       }
@@ -30,6 +34,7 @@
     <a
       class="w-full h-full flex items-center justify-center"
       [routerLink]="'candidate/create'"
+      [queryParams]="{ stageId: column.id }"
     >
       Add a card
     </a>
