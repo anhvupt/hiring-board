@@ -1,7 +1,11 @@
 <div
-  class="bg-white border border-primary rounded-lg drop-shadow-lg px-4 py-6 w-full"
+  tuiCardMedium
+  tuiSurface="elevated"
+  class="bg-white border border-primary rounded-lg drop-shadow-lg px-4 py-6 w-full cursor-move"
 >
-  <span>{{ candidate.name }}</span>
+  <span tuiSubtitle class="tui-text_body-l2 font-bold text-primary">{{
+    candidate.name
+  }}</span>
   <!-- <span
           class="example-box"
           [ngClass]="isMultiMoving && item.selected ? 'opacity-0' : ''"

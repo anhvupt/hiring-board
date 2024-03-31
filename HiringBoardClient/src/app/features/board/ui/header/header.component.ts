@@ -1,12 +1,25 @@
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { FormBuilder, FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
+import { PushPipe } from '@ngrx/component';
+import { Store } from '@ngrx/store';
 import {
   TuiButtonModule,
   TuiRootModule,
   TuiTextfieldControllerModule
 } from '@taiga-ui/core';
-import { TuiInputModule, TuiSelectModule } from '@taiga-ui/kit';
+import {
+  TuiDataListWrapperModule,
+  TuiInputDateModule,
+  TuiInputModule,
+  TuiSelectModule
+} from '@taiga-ui/kit';
+import { map } from 'rxjs';
+import {
+  InterviewerActions,
+  interviewerFeature
+} from '~/store/features/interviewer.feature';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 @Component({
   selector: 'app-header',
@@ -18,7 +31,10 @@ import { TuiInputModule, TuiSelectModule } from '@taiga-ui/kit';
     TuiSelectModule,
     TuiButtonModule,
     TuiTextfieldControllerModule,
-    RouterLink
+    TuiDataListWrapperModule,
+    TuiInputDateModule,
+    RouterLink,
+    PushPipe
   ],
   templateUrl: './header.component.html',
   styles: `
@@ -29,6 +45,13 @@ import { TuiInputModule, TuiSelectModule } from '@taiga-ui/kit';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class HeaderComponent {
+  items$ = inject(Store)
+    .select(interviewerFeature.selectData)
+    .pipe(
+      map((x) => x.map(({ name }) => name)),
+      takeUntilDestroyed()
+    );
+
   control = inject(FormBuilder).control('');
   text = '';
 }

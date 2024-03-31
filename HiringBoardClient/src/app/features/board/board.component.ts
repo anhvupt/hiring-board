@@ -1,22 +1,37 @@
 import {
   CdkDragDrop,
-  CdkDragStart,
   DragDropModule,
   moveItemInArray,
   transferArrayItem
 } from '@angular/cdk/drag-drop';
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { PushPipe } from '@ngrx/component';
+import {
+  ComponentStore,
+  provideComponentStore,
+  tapResponse
+} from '@ngrx/component-store';
+import { Store } from '@ngrx/store';
 import {
   TuiDataListModule,
   TuiSvgModule,
   TuiTextfieldControllerModule
 } from '@taiga-ui/core';
 import { TuiSelectModule } from '@taiga-ui/kit';
-import { Candidate, Stage } from '../../data-access/app.model';
+import { catchError, map, of, pipe, switchMap, tap } from 'rxjs';
+import { Board, CandidateBoardView } from '~/data-access/app.model';
+import { interviewerFeature } from '~/store/features/interviewer.feature';
+import { stageFeature } from '~/store/features/stages.feature';
 import { BoardColumnComponent } from './ui/board-column/board-column.component';
 import { HeaderComponent } from './ui/header/header.component';
+import { AppService } from '~/data-access/app.service';
+
+const initialState = {
+  candidates: {} as Board,
+  isMultipleMoving: false
+};
 
 @Component({
   selector: 'app-board',
@@ -30,43 +45,50 @@ import { HeaderComponent } from './ui/header/header.component';
     TuiTextfieldControllerModule,
     TuiSvgModule,
     HeaderComponent,
-    BoardColumnComponent
+    BoardColumnComponent,
+    PushPipe
   ],
   templateUrl: './board.component.html',
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  providers: [provideComponentStore(ComponentStore)]
 })
 export class BoardComponent {
+  private readonly cStore =
+    inject<ComponentStore<typeof initialState>>(ComponentStore);
+  private readonly store = inject(Store);
+  private readonly appService = inject(AppService);
   isMultiMoving = false;
 
-  stages: Stage[] = [
-    { id: '1', name: 'To do' },
-    { id: '2', name: 'Done' }
-  ];
+  vm$ = this.cStore.select(
+    this.cStore.state$,
+    this.store.select(interviewerFeature.selectData),
+    this.store.select(stageFeature.selectData),
+    (state, interviewers, stages) => ({ ...state, interviewers, stages })
+  );
 
-  lists: { [key: string]: Candidate[] } = {
-    '1': [
-      { id: '1', name: 'Episode I - The Phantom Menace', selected: true },
-      { id: '2', name: 'Episode II - Attack of the Clones', selected: true },
-      { id: '3', name: 'Episode III - Revenge of the Sith', selected: true }
-    ],
-    '2': [
-      { id: '4', name: 'Episode IV - A New Hope', selected: false },
-      { id: '5', name: 'Episode V - The Empire Strikes Back', selected: false },
-      { id: '6', name: 'Episode VI - Return of the Jedi', selected: false },
-      { id: '7', name: 'Episode VII - The Force Awakens', selected: false },
-      { id: '8', name: 'Episode VIII - The Last Jedi', selected: false },
-      { id: '9', name: 'Episode IX – The Rise of Skywalker', selected: false }
-    ]
-  };
-
-  getList(id: string) {
-    if (id in this.lists) {
-      return this.lists[id as keyof typeof this.lists];
-    }
-    return [];
+  constructor() {
+    this.cStore.setState(initialState);
+    this.loadBoard(of({}));
   }
 
-  drop(event: CdkDragDrop<Candidate[]>) {
+  getList(id: number) {
+    return this.vm$.pipe(
+      map(({ candidates }) =>
+        id in candidates ? candidates[+id as keyof typeof candidates] : []
+      )
+    );
+  }
+
+  getConnectedIds(id: number) {
+    return this.vm$.pipe(
+      map(({ stages }) =>
+        stages.filter((x) => x.id !== id).map((x) => String(x.id))
+      )
+    );
+  }
+
+  drop(event: CdkDragDrop<CandidateBoardView[]>) {
+    console.log(event);
     if (event.previousContainer === event.container) {
       moveItemInArray(
         event.container.data,
@@ -110,4 +132,15 @@ export class BoardComponent {
     //   list.forEach((item) => (item.selected = false))
     // );
   }
+
+  private loadBoard = this.cStore.effect<object>(
+    pipe(
+      switchMap(() => this.appService.getCandidates()),
+      tap((candidates) => this.cStore.patchState({ candidates })),
+      catchError((error) => {
+        console.error(error);
+        return of(error);
+      })
+    )
+  );
 }

@@ -23,18 +23,26 @@
   </div>
   <div class="flex lg:w-1/2 gap-2 mt-2 items-center lg:items-start">
     <tui-select
-      class="flex-1"
+      class="flex-1 tui-space_vertical_4"
       [(ngModel)]="text"
       tuiTextfieldSize="m"
       placeholder="Select option..."
       [tuiTextfieldLabelOutside]="true"
+    >
+      Interviewer
+      <input placeholder="Choose interviewer" tuiTextfield />
+      <tui-data-list-wrapper
+        *tuiDataList
+        [items]="(items$ | ngrxPush) ?? []"
+      ></tui-data-list-wrapper
     ></tui-select>
-    <tui-select
-      class="flex-1"
+    <tui-input-date
       [(ngModel)]="text"
       tuiTextfieldSize="m"
-      placeholder="Select option..."
+      class="tui-space_vertical-4 flex-1 my-0"
       [tuiTextfieldLabelOutside]="true"
-    ></tui-select>
+    >
+      Choose the created date
+    </tui-input-date>
   </div>
 </div>

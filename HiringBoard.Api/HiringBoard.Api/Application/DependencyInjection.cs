@@ -23,7 +23,16 @@ public static class DependencyInjection
             .AddSwaggerGen()
             .AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies())
             .AddMediatR(config => config.RegisterServicesFromAssembly(Assembly.GetEntryAssembly()))
-            .AddProblemDetails();
+            .AddProblemDetails()
+            .AddCors(opt =>
+            {
+                opt.AddPolicy("AllowAll", builder =>
+                {
+                    builder.AllowAnyOrigin()
+                    .AllowAnyMethod()
+                    .AllowAnyHeader();
+                });
+            });
         return builder;
     }
 
@@ -55,6 +64,7 @@ public static class DependencyInjection
 
         app.UseHttpsRedirection();
         app.MapEndpoints();
+        app.UseCors("AllowAll");
         app.Run();
     }
 }

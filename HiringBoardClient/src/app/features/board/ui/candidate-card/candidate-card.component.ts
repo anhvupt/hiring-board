@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
-import { Candidate } from '../../../../data-access/app.model';
+import { CandidateBoardView } from '~/data-access/app.model';
 
 @Component({
   selector: 'app-candidate-card',
@@ -9,5 +9,5 @@ import { Candidate } from '../../../../data-access/app.model';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class CandidateCardComponent {
-  @Input({ required: true }) candidate!: Candidate;
+  @Input({ required: true }) candidate!: CandidateBoardView;
 }

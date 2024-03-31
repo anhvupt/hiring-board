@@ -1,10 +1,7 @@
 import {
   CdkDragDrop,
   CdkDragStart,
-  CdkDropList,
-  DragDropModule,
-  moveItemInArray,
-  transferArrayItem
+  DragDropModule
 } from '@angular/cdk/drag-drop';
 import { CommonModule } from '@angular/common';
 import {
@@ -20,9 +17,10 @@ import {
   TuiTextfieldControllerModule
 } from '@taiga-ui/core';
 import { TuiSelectModule } from '@taiga-ui/kit';
-import { HeaderComponent } from '../header/header.component';
-import { Candidate, Stage } from '../../../../data-access/app.model';
+import { CandidateBoardView } from '~/data-access/app.model';
 import { CandidateCardComponent } from '../candidate-card/candidate-card.component';
+import { HeaderComponent } from '../header/header.component';
+import { RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-board-column',
@@ -35,17 +33,20 @@ import { CandidateCardComponent } from '../candidate-card/candidate-card.compone
     TuiTextfieldControllerModule,
     TuiSvgModule,
     HeaderComponent,
-    CandidateCardComponent
+    CandidateCardComponent,
+    RouterLink
   ],
   templateUrl: './board-column.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class BoardColumnComponent {
-  @Input({ required: true }) column!: { id: string; name: string };
-  @Input({ required: true }) list!: Candidate[];
-  @Input({ required: true }) connectedIds!: string[];
+  @Input({ required: true }) column!: { id: number; name: string };
+  @Input({ required: true }) list!: CandidateBoardView[];
+  @Input({ required: true }) connectedIds: string[] = [];
 
-  @Output() itemsDropped = new EventEmitter<CdkDragDrop<Candidate[]>>();
+  @Output() itemsDropped = new EventEmitter<
+    CdkDragDrop<CandidateBoardView[]>
+  >();
 
   get selectedItemsCount() {
     return this.list.filter((item) => item.selected).length;
@@ -64,7 +65,7 @@ export class BoardColumnComponent {
     // }
   }
 
-  drop(event: CdkDragDrop<Candidate[]>) {
+  drop(event: CdkDragDrop<CandidateBoardView[]>) {
     this.itemsDropped.next(event);
   }
 }

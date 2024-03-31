@@ -1,13 +1,15 @@
 <div
-  class="flex flex-col flex-grow items-start justify-center bg-gray-200 h-full px-2 rounded"
+  class="flex flex-col flex-grow items-start justify-center bg-gray-200 h-full p-2 rounded"
 >
-  <h2>{{ column.name }}</h2>
+  <h2 class="tui-text_body-l font-semibold mb-2 text-gray-500">
+    {{ column.name }}
+  </h2>
   <div
     cdkDropList
-    [id]="column.id"
+    [id]="column.id.toString()"
     [cdkDropListData]="list"
     [cdkDropListConnectedTo]="connectedIds"
-    class="flex flex-col gap-2 w-full"
+    class="flex flex-col gap-2 w-full min-h-10"
     (cdkDropListDropped)="drop($event)"
   >
     @for (item of list; track item) {
@@ -25,6 +27,11 @@
     type="button"
     class="tui-space_right-3 tui-space_bottom-3 w-full border border-primary border-dashed rounded-lg h-10 mt-4 hover:bg-accent-light transition-colors"
   >
-    Add a card
+    <a
+      class="w-full h-full flex items-center justify-center"
+      [routerLink]="'candidate/create'"
+    >
+      Add a card
+    </a>
   </button>
 </div>
