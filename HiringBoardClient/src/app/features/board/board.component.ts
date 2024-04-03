@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { PushPipe } from '@ngrx/component';
-import { ComponentStore, provideComponentStore } from '@ngrx/component-store';
+import { provideComponentStore } from '@ngrx/component-store';
 import { Store } from '@ngrx/store';
 import {
   TuiDataListModule,
@@ -11,23 +11,14 @@ import {
   TuiTextfieldControllerModule
 } from '@taiga-ui/core';
 import { TuiSelectModule } from '@taiga-ui/kit';
-import {
-  catchError,
-  distinctUntilChanged,
-  of,
-  pipe,
-  switchMap,
-  take,
-  tap,
-  withLatestFrom
-} from 'rxjs';
+import { distinctUntilChanged, take, tap } from 'rxjs';
 import { CandidateBoardView, Stage } from '~/data-access/app.model';
 import { AppService } from '~/data-access/app.service';
 import { interviewerFeature } from '~/store/features/interviewer.feature';
 import { stageFeature } from '~/store/features/stages.feature';
+import { BoardStore } from './board.store';
 import { BoardColumnComponent } from './ui/board-column/board-column.component';
 import { HeaderComponent } from './ui/header/header.component';
-import { BoardStore } from './board.store';
 
 @Component({
   selector: 'app-board',
