@@ -31,7 +31,10 @@ export class AppService {
     return this.http.put(`${this.apiUrl}/candidates/${model.id}`, model);
   }
 
-  updateCandidateStage(model: Candidate) {
-    return this.http.put(`${this.apiUrl}/candidates/${model.id}`, model);
+  updateCandidateStage(ids: number[], stageId: number) {
+    return this.http.patch(`${this.apiUrl}/candidates/stages`, {
+      ids,
+      stageId
+    });
   }
 }

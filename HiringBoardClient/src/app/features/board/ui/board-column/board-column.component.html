@@ -9,12 +9,12 @@
     [id]="column.id.toString()"
     [cdkDropListData]="list"
     [cdkDropListConnectedTo]="connectedIds"
-    (cdkDropListDropped)="drop($event)"
+    (cdkDropListDropped)="dropped($event)"
     class="flex flex-col gap-2 w-full min-h-8"
   >
     @for (item of list; track item) {
     <div cdkDrag (cdkDragStarted)="dragStarted($event)">
-      <app-candidate-card [candidate]="item" />
+      <app-candidate-card [candidate]="item" [connectedList]="connectedList" />
       <span
         *cdkDragPlaceholder
         class="bg-accent-light border border-primary border-dashed transition min-h-32 rounded-lg"

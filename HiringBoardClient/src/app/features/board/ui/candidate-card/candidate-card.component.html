@@ -10,7 +10,32 @@
           candidate.name
         }}</a>
       </p>
-      <span class="cursor-pointer">...</span>
+      <tui-hosted-dropdown
+        tuiDropdownAlign="right"
+        [content]="dropdown"
+        [sided]="true"
+        [(open)]="open"
+      >
+        <tui-svg
+          class="text-gray-300 hover:text-gray-500 cursor-pointer"
+          src="tuiIconChevronRight"
+          [tuiHint]="moveToTooltipTpl"
+        />
+        <ng-template #moveToTooltipTpl><label>Move to</label></ng-template>
+      </tui-hosted-dropdown>
+      <ng-template #dropdown let-close="close">
+        <tui-data-list>
+          <tui-opt-group>
+            <button
+              *ngFor="let stage of connectedList"
+              tuiOption
+              (click)="moveTo(stage.id)"
+            >
+              {{ stage.name }}
+            </button>
+          </tui-opt-group>
+        </tui-data-list>
+      </ng-template>
     </div>
     <p class="tui-text_body-s2 text-gray-500">{{ candidate.position }}</p>
     <p class="tui-text_body-s leading-relaxed">{{ candidate.notes }}</p>
@@ -20,8 +45,15 @@
     tuiSurface="elevated"
     class="bg-gray-100 rounded flex flex-col items-center justify-center p-4"
   >
-    <p>{{ candidate.email }}</p>
-    <p>{{ candidate.phone }}</p>
+    <p>
+      <tui-svg src="tuiIconMail" class="mr-1 text-gray-300" />
+      {{ candidate.email }}
+    </p>
+    <p>
+      <tui-svg src="tuiIconPhone" class="mr-1 text-gray-300" />{{
+        candidate.phone
+      }}
+    </p>
   </div>
   <div class="flex items-center justify-between mt-2">
     <tui-badge

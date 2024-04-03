@@ -11,16 +11,16 @@ import {
   Input,
   Output
 } from '@angular/core';
+import { RouterLink } from '@angular/router';
 import {
   TuiDataListModule,
   TuiSvgModule,
   TuiTextfieldControllerModule
 } from '@taiga-ui/core';
 import { TuiSelectModule } from '@taiga-ui/kit';
-import { CandidateBoardView } from '~/data-access/app.model';
+import { CandidateBoardView, Stage } from '~/data-access/app.model';
 import { CandidateCardComponent } from '../candidate-card/candidate-card.component';
 import { HeaderComponent } from '../header/header.component';
-import { RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-board-column',
@@ -42,7 +42,7 @@ import { RouterLink } from '@angular/router';
 export class BoardColumnComponent {
   @Input({ required: true }) column!: { id: number; name: string };
   @Input({ required: true }) list!: CandidateBoardView[];
-  @Input({ required: true }) connectedIds: string[] = [];
+  @Input({ required: true }) connectedList: Stage[] = [];
 
   @Output() itemsDropped = new EventEmitter<
     CdkDragDrop<CandidateBoardView[]>
@@ -50,6 +50,10 @@ export class BoardColumnComponent {
 
   get selectedItemsCount() {
     return this.list.filter((item) => item.selected).length;
+  }
+
+  get connectedIds() {
+    return this.connectedList.map((x) => String(x.id));
   }
 
   dragStarted($event: CdkDragStart<any>) {
@@ -65,7 +69,10 @@ export class BoardColumnComponent {
     // }
   }
 
-  drop(event: CdkDragDrop<CandidateBoardView[]>) {
+  dropped(event: CdkDragDrop<CandidateBoardView[]>) {
+    // if (!(event.isPointerOverContainer && event.item.data.source)) {
+    //   return;
+    // }
     this.itemsDropped.next(event);
   }
 }

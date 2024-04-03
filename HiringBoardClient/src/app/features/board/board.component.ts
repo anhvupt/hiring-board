@@ -1,18 +1,9 @@
-import {
-  CdkDragDrop,
-  DragDropModule,
-  moveItemInArray,
-  transferArrayItem
-} from '@angular/cdk/drag-drop';
+import { CdkDragDrop, DragDropModule } from '@angular/cdk/drag-drop';
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { PushPipe } from '@ngrx/component';
-import {
-  ComponentStore,
-  provideComponentStore,
-  tapResponse
-} from '@ngrx/component-store';
+import { ComponentStore, provideComponentStore } from '@ngrx/component-store';
 import { Store } from '@ngrx/store';
 import {
   TuiDataListModule,
@@ -22,24 +13,21 @@ import {
 import { TuiSelectModule } from '@taiga-ui/kit';
 import {
   catchError,
-  map,
+  distinctUntilChanged,
   of,
   pipe,
   switchMap,
+  take,
   tap,
   withLatestFrom
 } from 'rxjs';
-import { Board, CandidateBoardView } from '~/data-access/app.model';
+import { CandidateBoardView, Stage } from '~/data-access/app.model';
+import { AppService } from '~/data-access/app.service';
 import { interviewerFeature } from '~/store/features/interviewer.feature';
 import { stageFeature } from '~/store/features/stages.feature';
 import { BoardColumnComponent } from './ui/board-column/board-column.component';
 import { HeaderComponent } from './ui/header/header.component';
-import { AppService } from '~/data-access/app.service';
-
-const initialState = {
-  candidates: {} as Board,
-  isMultipleMoving: false
-};
+import { BoardStore } from './board.store';
 
 @Component({
   selector: 'app-board',
@@ -58,109 +46,97 @@ const initialState = {
   ],
   templateUrl: './board.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  providers: [provideComponentStore(ComponentStore)]
+  providers: [provideComponentStore(BoardStore)]
 })
 export class BoardComponent {
-  private readonly cStore =
-    inject<ComponentStore<typeof initialState>>(ComponentStore);
+  private readonly cStore = inject(BoardStore);
   private readonly store = inject(Store);
   private readonly appService = inject(AppService);
 
-  vm$ = this.cStore.select(
-    this.cStore.state$,
-    this.store.select(interviewerFeature.selectData),
-    this.store.select(stageFeature.selectData),
-    (state, interviewers, stages) => ({ ...state, interviewers, stages })
-  );
-
-  constructor() {
-    this.cStore.setState(initialState);
-    this.loadBoard(of({}));
-  }
-
-  getList(id: number) {
-    return this.vm$.pipe(
-      map(({ candidates }) =>
-        id in candidates ? candidates[+id as keyof typeof candidates] : []
-      )
+  vm$ = this.cStore
+    .select(
+      this.cStore.state$,
+      this.store.select(interviewerFeature.selectData),
+      this.store.select(stageFeature.selectData),
+      (state, interviewers, stages) => ({ ...state, interviewers, stages })
+    )
+    .pipe(
+      distinctUntilChanged((x, y) => JSON.stringify(x) === JSON.stringify(y)),
+      tap((x) => console.log('vm:', x))
     );
-  }
 
-  getConnectedIds(id: number) {
-    return this.vm$.pipe(
-      map(({ stages }) =>
-        stages.filter((x) => x.id !== id).map((x) => String(x.id))
-      )
-    );
+  getConnectedList(stages: Stage[], id: number) {
+    return stages.filter((x) => x.id !== id);
   }
 
   drop(event: CdkDragDrop<CandidateBoardView[]>) {
     console.log(event);
-    if (event.previousContainer === event.container) {
-      moveItemInArray(
-        event.container.data,
-        event.previousIndex,
-        event.currentIndex
-      );
-    } else {
-      const previousContainerData = event.previousContainer.data;
-      const containerData = event.container.data;
-      const selectedItems = previousContainerData.filter(
-        (item) => item.selected
-      );
-
-      if (selectedItems.length > 0) {
-        // Move all selected items
-        selectedItems.forEach((item) => {
-          const index = previousContainerData.indexOf(item);
-          if (index !== -1) {
-            transferArrayItem(
-              previousContainerData,
-              containerData,
-              index,
-              event.currentIndex
-            );
-          }
-        });
-        // Deselect items after moving
-      } else {
-        console.log(
-          previousContainerData,
-          containerData,
-          event.previousIndex,
-          event.currentIndex
-        );
-        // Move single item logic if no items are selected
-        transferArrayItem(
-          previousContainerData,
-          containerData,
-          event.previousIndex,
-          event.currentIndex
-        );
-      }
-    }
-
-    // this.isMultiMoving = false;
-    // [Array.from(this.lists.values())].forEach((list) =>
-    //   list.forEach((item) => (item.selected = false))
-    // );
+    this.cStore
+      .select(
+        ({ candidates }) =>
+          candidates[+event.previousContainer.id][event.previousIndex]
+      )
+      .pipe(take(1))
+      .subscribe((item) => {
+        if (event.previousContainer === event.container) {
+          this.dropIntoSameStage([item], event);
+          return;
+        }
+        this.dropIntoOtherStage([item], event);
+      });
   }
 
-  private loadBoard = this.cStore.effect<object>(
-    pipe(
-      switchMap(() => this.appService.getCandidates()),
-      withLatestFrom(this.store.select(stageFeature.selectData)),
-      tap(([candidates, stages]) => {
-        const resolved = stages.reduce(
-          (acc, cur) => ({ ...acc, [`${cur.id}`]: candidates[cur.id] ?? [] }),
-          {}
-        );
-        this.cStore.patchState({ candidates: resolved });
-      }),
-      catchError((error) => {
-        console.error(error);
-        return of(error);
-      })
-    )
-  );
+  private dropIntoSameStage(
+    items: CandidateBoardView[],
+    event: CdkDragDrop<CandidateBoardView[]>
+  ) {
+    // 1 item first
+    const item = items?.[0];
+    if (!item) {
+      return;
+    }
+
+    this.cStore.patchState(({ candidates }) => {
+      const container = [...candidates[+event.container.id]];
+      container.splice(event.previousIndex, 1);
+      container.splice(event.currentIndex, 0, item);
+      return {
+        candidates: { ...candidates, [`${event.container.id}`]: container }
+      };
+    });
+  }
+
+  private dropIntoOtherStage(
+    items: CandidateBoardView[],
+    event: CdkDragDrop<CandidateBoardView[]>
+  ) {
+    // 1 item first
+    const item = items?.[0];
+    if (!item) {
+      return;
+    }
+    const prevStage = event.previousContainer.id;
+    const curStage = event.container.id;
+
+    this.cStore.patchState((state) => {
+      const previous = [...state.candidates[+prevStage]];
+      const container = [...state.candidates[+curStage]];
+      previous.splice(event.previousIndex, 1);
+      container.splice(event.currentIndex, 0, item);
+      return {
+        candidates: {
+          ...state.candidates,
+          [`${prevStage}`]: previous,
+          [`${curStage}`]: container
+        }
+      };
+    });
+    this.appService.updateCandidateStage([item.id], +curStage).subscribe({
+      next: () => {},
+      error: (e) => {
+        alert(e);
+        console.error(e);
+      }
+    });
+  }
 }
