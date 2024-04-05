@@ -11,7 +11,7 @@ import {
   TuiTextfieldControllerModule
 } from '@taiga-ui/core';
 import { TuiSelectModule } from '@taiga-ui/kit';
-import { distinctUntilChanged, take, tap } from 'rxjs';
+import { concatMap, distinctUntilChanged, take, tap } from 'rxjs';
 import { CandidateBoardView, Stage } from '~/data-access/app.model';
 import { AppService } from '~/data-access/app.service';
 import { interviewerFeature } from '~/store/features/interviewer.feature';
@@ -51,83 +51,58 @@ export class BoardComponent {
       this.store.select(stageFeature.selectData),
       (state, interviewers, stages) => ({ ...state, interviewers, stages })
     )
-    .pipe(
-      distinctUntilChanged((x, y) => JSON.stringify(x) === JSON.stringify(y)),
-      tap((x) => console.log('vm:', x))
-    );
+    .pipe(tap((x) => console.log('vm:', x)));
 
   getConnectedList(stages: Stage[], id: number) {
     return stages.filter((x) => x.id !== id);
   }
 
-  drop(event: CdkDragDrop<CandidateBoardView[]>) {
-    console.log(event);
+  dropped(event: CdkDragDrop<CandidateBoardView[]>) {
+    if (event.previousContainer === event.container) {
+      return;
+    }
+    const prevStage = +event.previousContainer.id;
+    const curStage = +event.container.id;
+
     this.cStore
-      .select(
-        ({ candidates }) =>
-          candidates[+event.previousContainer.id][event.previousIndex]
+      .select(({ candidates, selectedIds }) => {
+        const items = candidates[prevStage].filter((x) =>
+          selectedIds.has(x.id)
+        );
+        return { items, selectedIds };
+      })
+      .pipe(
+        take(1),
+        tap(({ items, selectedIds }) =>
+          this.cStore.patchState((state) => {
+            let previous = [...state.candidates[prevStage]];
+            const container = [...state.candidates[curStage]];
+
+            previous = previous.filter((x) => !selectedIds.has(x.id));
+            container.splice(event.currentIndex, 0, ...items);
+
+            return {
+              candidates: {
+                ...state.candidates,
+                [`${prevStage}`]: previous,
+                [`${curStage}`]: container
+              }
+            };
+          })
+        ),
+        concatMap(({ selectedIds }) =>
+          this.appService.updateCandidateStage(
+            Array.from(selectedIds.values()),
+            +curStage
+          )
+        )
       )
-      .pipe(take(1))
-      .subscribe((item) => {
-        if (event.previousContainer === event.container) {
-          this.dropIntoSameStage([item], event);
-          return;
+      .subscribe({
+        next: () => {},
+        error: (e) => {
+          alert(e);
+          console.error(e);
         }
-        this.dropIntoOtherStage([item], event);
       });
-  }
-
-  private dropIntoSameStage(
-    items: CandidateBoardView[],
-    event: CdkDragDrop<CandidateBoardView[]>
-  ) {
-    // 1 item first
-    const item = items?.[0];
-    if (!item) {
-      return;
-    }
-
-    this.cStore.patchState(({ candidates }) => {
-      const container = [...candidates[+event.container.id]];
-      container.splice(event.previousIndex, 1);
-      container.splice(event.currentIndex, 0, item);
-      return {
-        candidates: { ...candidates, [`${event.container.id}`]: container }
-      };
-    });
-  }
-
-  private dropIntoOtherStage(
-    items: CandidateBoardView[],
-    event: CdkDragDrop<CandidateBoardView[]>
-  ) {
-    // 1 item first
-    const item = items?.[0];
-    if (!item) {
-      return;
-    }
-    const prevStage = event.previousContainer.id;
-    const curStage = event.container.id;
-
-    this.cStore.patchState((state) => {
-      const previous = [...state.candidates[+prevStage]];
-      const container = [...state.candidates[+curStage]];
-      previous.splice(event.previousIndex, 1);
-      container.splice(event.currentIndex, 0, item);
-      return {
-        candidates: {
-          ...state.candidates,
-          [`${prevStage}`]: previous,
-          [`${curStage}`]: container
-        }
-      };
-    });
-    this.appService.updateCandidateStage([item.id], +curStage).subscribe({
-      next: () => {},
-      error: (e) => {
-        alert(e);
-        console.error(e);
-      }
-    });
   }
 }

@@ -10,7 +10,7 @@
         [column]="stage"
         [list]="vm.candidates[stage.id]"
         [connectedList]="getConnectedList(vm.stages, stage.id)"
-        (itemsDropped)="drop($event)"
+        (itemsDropped)="dropped($event)"
       />
     </div>
     }

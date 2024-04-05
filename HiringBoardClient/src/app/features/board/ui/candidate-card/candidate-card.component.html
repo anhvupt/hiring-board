@@ -5,11 +5,19 @@
 >
   <div class="flex flex-col gap-1">
     <div class="flex items-center justify-between">
-      <p tuiSubtitle class="tui-text_body-l font-bold text-primary">
-        <a class="h-full w-full" [routerLink]="['candidate', candidate.id]">{{
-          candidate.name
-        }}</a>
-      </p>
+      <div class="flex gap-2 items-center">
+        <tui-checkbox
+          *ngIf="isSelectable"
+          size="l"
+          [(ngModel)]="isSelected"
+          (ngModelChange)="toggleChecked()"
+        />
+        <p tuiSubtitle class="tui-text_body-l font-bold text-primary">
+          <a class="h-full w-full" [routerLink]="['candidate', candidate.id]">{{
+            candidate.name
+          }}</a>
+        </p>
+      </div>
       <tui-hosted-dropdown
         tuiDropdownAlign="right"
         [content]="dropdown"
@@ -43,7 +51,7 @@
   <div
     tuiCardMedium
     tuiSurface="elevated"
-    class="bg-gray-100 rounded flex flex-col items-center justify-center p-4"
+    class="bg-gray-100 rounded flex flex-col py-3 px-6"
   >
     <p>
       <tui-svg src="tuiIconMail" class="mr-1 text-gray-300" />

@@ -2,7 +2,9 @@ import { CommonModule, DatePipe } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
+  EventEmitter,
   Input,
+  Output,
   inject
 } from '@angular/core';
 import { RouterLink } from '@angular/router';
@@ -14,10 +16,16 @@ import {
   TuiHostedDropdownModule,
   TuiSvgModule
 } from '@taiga-ui/core';
-import { TuiBadgeModule } from '@taiga-ui/kit';
+import { TuiBadgeModule, TuiCheckboxModule } from '@taiga-ui/kit';
 import { CandidateBoardView, Stage } from '~/data-access/app.model';
 import { AppService } from '~/data-access/app.service';
 import { BoardStore } from '../../board.store';
+import {
+  FormBuilder,
+  FormControl,
+  FormsModule,
+  ReactiveFormsModule
+} from '@angular/forms';
 
 @Component({
   selector: 'app-candidate-card',
@@ -31,7 +39,10 @@ import { BoardStore } from '../../board.store';
     TuiDataListModule,
     PushPipe,
     CommonModule,
-    TuiHintModule
+    TuiHintModule,
+    TuiCheckboxModule,
+    FormsModule,
+    ReactiveFormsModule
   ],
   templateUrl: './candidate-card.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -39,17 +50,33 @@ import { BoardStore } from '../../board.store';
   providers: [provideComponentStore(ComponentStore)]
 })
 export class CandidateCardComponent {
-  @Input({ required: true }) candidate!: CandidateBoardView;
-  @Input() connectedList: Stage[] = [];
-
   private readonly appService = inject(AppService);
   private readonly boardStore = inject(BoardStore);
+
   open = false;
+  _isSelected = false;
+
+  @Input({ required: true }) candidate!: CandidateBoardView;
+  @Input() connectedList: Stage[] = [];
+  @Input() isSelectable = false;
+  @Input() set isSelected(value: boolean) {
+    this._isSelected = value;
+  }
+
+  @Output() checkChanges = new EventEmitter<unknown>();
+
+  get isSelected() {
+    return this._isSelected;
+  }
 
   moveTo(id: number) {
     this.appService.updateCandidateStage([this.candidate.id], id).subscribe({
-      next: () => this.boardStore.loadBoard({}),
+      next: () => this.boardStore.reloadBoard(),
       error: (e) => alert(e)
     });
+  }
+
+  toggleChecked() {
+    this.checkChanges.next(Date.now);
   }
 }

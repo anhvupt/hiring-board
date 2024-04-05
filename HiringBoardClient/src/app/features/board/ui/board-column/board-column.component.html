@@ -1,9 +1,25 @@
 <div
+  *ngIf="vm$ | ngrxPush as vm"
   class="flex flex-col flex-grow items-start justify-center bg-gray-200 h-full p-2 rounded"
 >
-  <h2 class="tui-text_body-l2 font-semibold mb-2 text-gray-500">
-    {{ column.name }}
-  </h2>
+  <div class="flex items-center justify-between w-full mb-2">
+    <h2 class="tui-text_body-l2 font-semibold text-gray-500">
+      {{ column.name }}
+    </h2>
+    <button
+      (click)="toggleSelectable()"
+      tuiButton
+      appearance="flat"
+      type="button"
+      size="xs"
+    >
+      @if (!vm.isSelectable) {
+      <span class="text-gray-500">Select</span>
+      }@else {
+      <tui-svg src="tuiIconXCircle" />
+      }
+    </button>
+  </div>
   <div
     cdkDropList
     [id]="column.id.toString()"
@@ -13,21 +29,27 @@
     class="flex flex-col gap-2 w-full min-h-8"
   >
     @for (item of list; track item) {
-    <div cdkDrag (cdkDragStarted)="dragStarted($event)">
-      <app-candidate-card [candidate]="item" [connectedList]="connectedList" />
+    <div cdkDrag>
+      <app-candidate-card
+        [candidate]="item"
+        [connectedList]="connectedList"
+        [isSelected]="vm.selectedIds.has(item.id)"
+        [isSelectable]="vm.isSelectable"
+        (checkChanges)="toggleSelected(item.id)"
+      />
       <span
         *cdkDragPlaceholder
         class="bg-accent-light border border-primary border-dashed transition min-h-32 rounded-lg"
       ></span>
       @if(selectedItemsCount > 1){
-      <span *cdkDragPreview>{{ selectedItemsCount + ' selected items' }}</span>
+      <div *cdkDragPreview class="opacity-70">
+        {{ vm.selectedIds.size + ' items' }}
+      </div>
       }
     </div>
     }
   </div>
   <button
-    appearance="flat"
-    tuiButton
     type="button"
     class="tui-space_right-3 tui-space_bottom-3 w-full border border-primary border-dashed rounded-lg h-10 mt-4 hover:bg-accent-light transition-colors"
   >
