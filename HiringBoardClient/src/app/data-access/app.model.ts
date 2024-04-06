@@ -43,6 +43,7 @@ export interface StageUpdate {
 }
 
 export interface CandidateParams {
-  interviewerId: string;
-  search: string;
+  interviewerId: string | null;
+  search: string | null;
+  createdDate: Date | null;
 }

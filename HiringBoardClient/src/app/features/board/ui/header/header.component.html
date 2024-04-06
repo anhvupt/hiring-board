@@ -1,12 +1,13 @@
 <h1 class="tui-text_h6 text-primary">Hiring board</h1>
-<div class="py-4">
+<form [formGroup]="paramsForm" class="py-4">
   <div class="flex items-start lg:items-center justify-between">
     <div class="flex items-center w-full justify-between gap-2">
       <tui-input
+        formControlName="search"
         class="w-full lg:w-1/2"
-        [(ngModel)]="text"
         tuiTextfieldSize="m"
         tuiAutofocus
+        [tuiTextfieldCleaner]="true"
         [tuiTextfieldLabelOutside]="true"
       >
         Search...
@@ -22,27 +23,30 @@
     </div>
   </div>
   <div class="flex lg:w-1/2 gap-2 mt-2 items-center lg:items-start">
-    <tui-select
+    <tui-combo-box
       class="flex-1 tui-space_vertical_4"
-      [(ngModel)]="text"
+      formControlName="interviewer"
       tuiTextfieldSize="m"
-      placeholder="Select option..."
+      placeholder="Choose the created interviewer"
+      [stringify]="stringify"
       [tuiTextfieldLabelOutside]="true"
+      [tuiTextfieldCleaner]="true"
     >
-      Interviewer
-      <input placeholder="Choose interviewer" tuiTextfield />
+      Choose the created interviewer
       <tui-data-list-wrapper
         *tuiDataList
+        [itemContent]="stringify | tuiStringifyContent"
         [items]="(items$ | ngrxPush) ?? []"
-      ></tui-data-list-wrapper
-    ></tui-select>
+      ></tui-data-list-wrapper>
+    </tui-combo-box>
     <tui-input-date
-      [(ngModel)]="text"
+      formControlName="createdDate"
       tuiTextfieldSize="m"
       class="tui-space_vertical-4 flex-1 my-0"
       [tuiTextfieldLabelOutside]="true"
+      [tuiTextfieldCleaner]="true"
     >
       Choose the created date
     </tui-input-date>
   </div>
-</div>
+</form>

@@ -44,7 +44,7 @@ export class BoardComponent {
   private readonly store = inject(Store);
   private readonly appService = inject(AppService);
 
-  vm$ = this.cStore
+  readonly vm$ = this.cStore
     .select(
       this.cStore.state$,
       this.store.select(interviewerFeature.selectData),
@@ -66,10 +66,13 @@ export class BoardComponent {
 
     this.cStore
       .select(({ candidates, selectedIds }) => {
-        const items = candidates[prevStage].filter((x) =>
-          selectedIds.has(x.id)
-        );
-        return { items, selectedIds };
+        const items = selectedIds.size
+          ? candidates[prevStage].filter((x) => selectedIds.has(x.id))
+          : [candidates[prevStage][event.previousIndex]]; // the default dropped item
+        return {
+          items,
+          selectedIds: selectedIds.size ? selectedIds : new Set([items[0].id])
+        };
       })
       .pipe(
         take(1),

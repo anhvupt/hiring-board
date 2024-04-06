@@ -1,6 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
-import { Board, Candidate, Stage } from './app.model';
+import { Board, Candidate, CandidateParams, Stage } from './app.model';
+import { toHttpParams } from '~/app.utils';
 
 @Injectable({ providedIn: 'root' })
 export class AppService {
@@ -15,8 +16,10 @@ export class AppService {
     return this.http.get<Stage[]>(`${this.apiUrl}/interviewers`);
   }
 
-  getCandidates() {
-    return this.http.get<Board>(`${this.apiUrl}/candidates`);
+  getCandidates(params: CandidateParams) {
+    return this.http.get<Board>(`${this.apiUrl}/candidates`, {
+      params: toHttpParams(params)
+    });
   }
 
   getCandidateId(id: string) {

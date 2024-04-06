@@ -3,12 +3,17 @@ import { ComponentStore, OnStateInit } from '@ngrx/component-store';
 import { Store } from '@ngrx/store';
 import { cloneDeep } from 'lodash';
 import { catchError, of, pipe, switchMap, tap, withLatestFrom } from 'rxjs';
-import { Board } from '~/data-access/app.model';
+import { Board, CandidateParams } from '~/data-access/app.model';
 import { AppService } from '~/data-access/app.service';
 import { stageFeature } from '~/store/features/stages.feature';
 
 const initialState = {
   candidates: {} as Board,
+  params: {
+    interviewerId: '',
+    search: '',
+    createdDate: null
+  } as CandidateParams,
   selectableStage: null as null | number,
   selectedIds: new Set<number>()
 };
@@ -26,15 +31,17 @@ export class BoardStore
   }
 
   ngrxOnStateInit() {
-    this.loadBoard({});
+    this.loadBoard(this.select(({ params }) => params));
   }
 
   resetSelection() {
     this.patchState({ selectedIds: new Set() });
   }
 
-  reloadBoard() {
-    this.loadBoard({});
+  reloadBoard(params?: Partial<CandidateParams>) {
+    this.patchState((x) => ({
+      params: { ...x.params, ...params } ?? cloneDeep(initialState.params)
+    }));
   }
 
   toggleCandidateSelection(id: number) {
@@ -51,9 +58,9 @@ export class BoardStore
     }));
   }
 
-  private readonly loadBoard = this.effect<object>(
+  private readonly loadBoard = this.effect<CandidateParams>(
     pipe(
-      switchMap(() => this.appService.getCandidates()),
+      switchMap((params) => this.appService.getCandidates(params)),
       withLatestFrom(this.store.select(stageFeature.selectData)),
       tap(([candidates, stages]) => {
         const resolved = stages.reduce(
