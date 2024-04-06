@@ -1,1 +1,5 @@
-back <app-candidate-form />
+<app-candidate-form
+  [model]="(defaultInfo$ | ngrxPush) ?? {}"
+  (save)="saved($event)"
+  >Create new candidate</app-candidate-form
+>

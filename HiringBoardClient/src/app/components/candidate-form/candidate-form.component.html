@@ -1,79 +1,159 @@
-<div class="tui-container">
-  <form [formGroup]="testForm">
-    <div class="tui-row tui-row_sme">
-      <div class="tui-col_8">
-        <h3 class="tui-form__header tui-form__header_margin-top_none">
-          <ng-content></ng-content>
-        </h3>
-        <div class="tui-form__row">
-          <tui-input formControlName="nameValue" tuiHintContent="A tooltip">
-            Textfield
+<div class="mx-auto flex justify-center py-4 lg:py-8">
+  <form
+    class="w-full tui-container rounded-lg bg-white drop-shadow"
+    [formGroup]="form"
+  >
+    <div class="lg:p-8 flex flex-col gap-4 lg:gap-6">
+      <h3 class="tui-form__header tui-form__header_margin-top_none">
+        <ng-content></ng-content>
+      </h3>
+
+      <div class="flex flex-col lg:flex-row items-start gap-4">
+        <div class="w-full lg:w-auto lg:flex-1">
+          <tui-input formControlName="firstName">
+            First name
             <input placeholder="Field placeholder" tuiTextfield />
             <span class="tui-required"></span>
           </tui-input>
           <tui-error
-            formControlName="nameValue"
+            formControlName="firstName"
+            [error]="['required'] | tuiFieldError | async"
+          ></tui-error>
+        </div>
+
+        <div class="w-full lg:w-auto lg:flex-1">
+          <tui-input formControlName="lastName">
+            Last name
+            <input placeholder="Field placeholder" tuiTextfield />
+            <span class="tui-required"></span>
+          </tui-input>
+          <tui-error
+            formControlName="lastName"
+            [error]="['required'] | tuiFieldError | async"
+          ></tui-error>
+        </div>
+      </div>
+
+      <div class="w-full lg:w-auto lg:flex-1">
+        <tui-input formControlName="position">
+          Position
+          <input placeholder="Field placeholder" tuiTextfield />
+          <span class="tui-required"></span>
+        </tui-input>
+        <tui-error
+          formControlName="position"
+          [error]="[] | tuiFieldError | async"
+        ></tui-error>
+      </div>
+
+      <div class="flex flex-col lg:flex-row items-start gap-4">
+        <div class="w-full lg:w-auto lg:flex-1">
+          <tui-input formControlName="email">
+            Email
+            <input placeholder="Field placeholder" tuiTextfield />
+            <span class="tui-required"></span>
+          </tui-input>
+          <tui-error
+            formControlName="email"
             [error]="[] | tuiFieldError | async"
           ></tui-error>
         </div>
-        <div class="tui-form__row">
-          <tui-input formControlName="nameValue" tuiHintContent="A tooltip">
-            Textfield
+
+        <div class="w-full lg:w-auto lg:flex-1">
+          <tui-input formControlName="phone">
+            Phone number
             <input placeholder="Field placeholder" tuiTextfield />
             <span class="tui-required"></span>
           </tui-input>
           <tui-error
-            formControlName="nameValue"
-            [error]="[] | tuiFieldError | async"
-          ></tui-error>
-        </div>
-        <div class="tui-form__row">
-          <tui-input formControlName="nameValue" tuiHintContent="A tooltip">
-            Textfield
-            <input placeholder="Field placeholder" tuiTextfield />
-            <span class="tui-required"></span>
-          </tui-input>
-          <tui-error
-            formControlName="nameValue"
-            [error]="[] | tuiFieldError | async"
-          ></tui-error>
-        </div>
-        <div class="tui-form__row">
-          <tui-input formControlName="nameValue" tuiHintContent="A tooltip">
-            Textfield
-            <input placeholder="Field placeholder" tuiTextfield />
-            <span class="tui-required"></span>
-          </tui-input>
-          <tui-error
-            formControlName="nameValue"
-            [error]="[] | tuiFieldError | async"
-          ></tui-error>
-        </div>
-        <div class="tui-form__row">
-          <tui-input formControlName="nameValue" tuiHintContent="A tooltip">
-            Textfield
-            <input placeholder="Field placeholder" tuiTextfield />
-            <span class="tui-required"></span>
-          </tui-input>
-          <tui-error
-            formControlName="nameValue"
+            formControlName="phone"
             [error]="[] | tuiFieldError | async"
           ></tui-error>
         </div>
       </div>
+
+      <div
+        *ngIf="vm$ | ngrxPush as vm"
+        class="flex flex-col lg:flex-row items-start gap-4"
+      >
+        <div class="w-full lg:w-auto lg:flex-1">
+          <tui-combo-box
+            class="flex-1 tui-space_vertical_4"
+            formControlName="interviewer"
+            tuiTextfieldSize="l"
+            placeholder="Choose the created interviewer"
+            [stringify]="stringify"
+            [tuiTextfieldLabelOutside]="true"
+            [tuiTextfieldCleaner]="true"
+          >
+            Choose the interviewer
+            <tui-data-list-wrapper
+              *tuiDataList
+              [itemContent]="stringify | tuiStringifyContent"
+              [items]="vm.interviewers"
+            ></tui-data-list-wrapper>
+          </tui-combo-box>
+          <tui-error
+            formControlName="interviewer"
+            [error]="[] | tuiFieldError | async"
+          ></tui-error>
+        </div>
+
+        <div class="w-full lg:w-auto lg:flex-1">
+          <tui-combo-box
+            class="flex-1 tui-space_vertical_4"
+            formControlName="stage"
+            tuiTextfieldSize="l"
+            placeholder="Choose the created interviewer"
+            [stringify]="stringify"
+            [tuiTextfieldLabelOutside]="true"
+            [tuiTextfieldCleaner]="true"
+          >
+            Choose the stage
+            <tui-data-list-wrapper
+              *tuiDataList
+              [itemContent]="stringify | tuiStringifyContent"
+              [items]="vm.stages"
+            ></tui-data-list-wrapper>
+          </tui-combo-box>
+          <tui-error
+            formControlName="stage"
+            [error]="[] | tuiFieldError | async"
+          ></tui-error>
+        </div>
+      </div>
+
+      <div class="w-full">
+        <tui-textarea formControlName="notes" [expandable]="true">
+          Notes
+        </tui-textarea>
+      </div>
     </div>
-    <div class="tui-form__buttons">
-      <button size="l" tuiButton type="submit" class="tui-form__button">
-        Submit
-      </button>
+
+    <!-- Button group -->
+    <div
+      class="flex items-center justify-end p-4 bg-gray-50 rounded-b-lg lg:px-8"
+    >
       <button
         appearance="flat"
-        size="l"
+        size="m"
         tuiButton
         type="button"
         class="tui-form__button"
       >
-        Cancel
+        <a class="h-full w-full flex items-center" [routerLink]="'/'">
+          Cancel
+        </a>
+      </button>
+      <button
+        size="m"
+        tuiButton
+        appearance="primary-button"
+        type="button"
+        class="tui-form__button"
+        (click)="saved()"
+      >
+        Submit
       </button>
     </div>
   </form>

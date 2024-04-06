@@ -32,8 +32,8 @@ export interface Candidate {
   email: string;
   phone: string;
   notes: string;
-  interviewerId: string;
-  stageId: string;
+  interviewerId: number;
+  stageId: number;
   createdDate: Date;
 }
 

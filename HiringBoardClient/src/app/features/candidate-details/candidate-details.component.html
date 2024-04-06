@@ -1,1 +1,6 @@
-<p>candidate-details works!</p>
+<app-candidate-form
+  *ngIf="vm$ | ngrxPush as vm"
+  [model]="vm.candidate"
+  (save)="saved($event)"
+  >Candidate</app-candidate-form
+>

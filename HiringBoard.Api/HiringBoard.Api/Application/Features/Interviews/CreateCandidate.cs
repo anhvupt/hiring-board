@@ -28,7 +28,6 @@ public static class CreateCandidate
         public string Position { get; set; }
         [RegularExpression(RegExPatterns.IsEmail)]
         public string Email { get; set; }
-        [RegularExpression(RegExPatterns.IsPhoneNumber)]
         public string Phone { get; set; }
         [MaxLength(500)]
         public string Notes { get; set; }
@@ -56,7 +55,8 @@ public static class CreateCandidate
                         Position = src.Position,
                         Notes = src.Notes,
                         InterviewerId = src.InterviewerId,
-                        StageId = src.StageId
+                        StageId = src.StageId,
+                        CreatedDate = DateTimeOffset.Now
                     };
                 });
         }

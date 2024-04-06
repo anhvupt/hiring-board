@@ -1,124 +1,136 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component } from '@angular/core';
 import {
-  FormControl,
-  FormGroup,
+  ChangeDetectionStrategy,
+  Component,
+  EventEmitter,
+  Input,
+  Output,
+  inject
+} from '@angular/core';
+import {
+  FormBuilder,
   FormsModule,
   ReactiveFormsModule,
   Validators
 } from '@angular/forms';
-import { TuiCurrency, TuiMoneyModule } from '@taiga-ui/addon-commerce';
-import { TuiDay, TuiTime } from '@taiga-ui/cdk';
+import { RouterLink } from '@angular/router';
+import { PushPipe } from '@ngrx/component';
+import { Store, createSelector } from '@ngrx/store';
 import {
   TuiButtonModule,
-  TuiDataListModule,
   TuiErrorModule,
-  TuiHintModule,
   TuiTextfieldControllerModule
 } from '@taiga-ui/core';
 import {
+  TuiComboBoxModule,
   TuiDataListWrapperModule,
   TuiFieldErrorPipeModule,
   TuiInputModule,
-  TuiSelectModule
+  TuiStringifyContentPipeModule,
+  TuiTextareaModule
 } from '@taiga-ui/kit';
+import { Observable, filter, map, take, tap } from 'rxjs';
+import { Candidate, Interviewer, Stage } from '~/data-access/app.model';
+import { interviewerFeature } from '~/store/features/interviewer.feature';
+import { stageFeature } from '~/store/features/stages.feature';
 
-class User {
-  constructor(readonly firstName: string, readonly lastName: string) {}
-
-  toString(): string {
-    return `${this.firstName} ${this.lastName}`;
-  }
-}
-
-class Account {
-  constructor(
-    readonly id: string,
-    readonly name: string,
-    readonly amount: number,
-    readonly currency: TuiCurrency,
-    readonly cardSvg: string
-  ) {}
-}
+const emailPattern: RegExp = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/;
 
 @Component({
   selector: 'app-candidate-form',
   standalone: true,
   imports: [
     CommonModule,
-    TuiMoneyModule,
     TuiInputModule,
-    TuiHintModule,
     TuiTextfieldControllerModule,
-    TuiSelectModule,
-    TuiDataListModule,
+    TuiComboBoxModule,
+    TuiDataListWrapperModule,
+    TuiStringifyContentPipeModule,
     ReactiveFormsModule,
     TuiErrorModule,
     TuiFieldErrorPipeModule,
-    TuiDataListWrapperModule,
     TuiButtonModule,
-    FormsModule
+    FormsModule,
+    TuiTextareaModule,
+    RouterLink,
+    PushPipe
   ],
   templateUrl: './candidate-form.component.html',
-  styleUrl: './candidate-form.component.less',
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class CandidateFormComponent {
-  readonly svgIcons = {
-    common: 'https://ng-web-apis.github.io/dist/assets/images/common.svg',
-    universal: 'https://ng-web-apis.github.io/dist/assets/images/universal.svg',
-    intersection:
-      'https://ng-web-apis.github.io/dist/assets/images/intersection-observer.svg',
-    mutation:
-      'https://ng-web-apis.github.io/dist/assets/images/mutation-observer.svg'
+  private readonly store = inject(Store);
+  private formConfigs: Partial<{ [key in keyof Candidate]: unknown }> & {
+    interviewer: [Interviewer | null, unknown];
+    stage: [Stage | null, unknown];
+  } = {
+    firstName: ['', Validators.required],
+    lastName: ['', Validators.required],
+    position: ['', Validators.required],
+    email: ['', [Validators.required, Validators.pattern(emailPattern)]],
+    phone: ['', Validators.required],
+    interviewer: [null, Validators.required],
+    stage: [null, Validators.required],
+    notes: ['']
   };
 
-  persons = [new User('Roman', 'Sedov'), new User('Alex', 'Inkin')];
+  readonly form = inject(FormBuilder).group(this.formConfigs);
+  readonly stringify = ({ name }: { name: string }) => name;
 
-  accounts = [
-    new Account(
-      '1',
-      'Common',
-      24876.55,
-      TuiCurrency.Ruble,
-      this.svgIcons.common
-    ),
-    new Account(
-      '2',
-      'Universal',
-      335,
-      TuiCurrency.Dollar,
-      this.svgIcons.universal
-    ),
-    new Account(
-      '3',
-      'Intersection',
-      10000,
-      TuiCurrency.Euro,
-      this.svgIcons.intersection
-    ),
-    new Account('4', 'Mutation', 100, TuiCurrency.Pound, this.svgIcons.mutation)
-  ];
+  @Input() set model(model: Partial<Candidate>) {
+    this.toFormValue(model).subscribe((value) => this.form.patchValue(value));
+  }
 
-  testForm = new FormGroup({
-    nameValue: new FormControl('', Validators.required),
-    textValue: new FormControl('', Validators.required),
-    passwordValue: new FormControl('', Validators.required),
-    phoneValue: new FormControl('', Validators.required),
-    moneyValue: new FormControl('100', Validators.required),
-    periodValue: new FormControl(new TuiDay(2017, 2, 15), Validators.required),
-    timeValue: new FormControl(new TuiTime(12, 30), Validators.required),
-    personValue: new FormControl(this.persons[0]),
-    quantityValue: new FormControl(50_000, Validators.required),
-    radioValue: new FormControl('with-commission'),
-    accountWherefrom: new FormControl(null),
-    accountWhere: new FormControl(null),
-    checkboxValue: new FormControl(false),
-    osnoValue: new FormControl(false),
-    usnValue: new FormControl(false),
-    eshnValue: new FormControl(false),
-    envdValue: new FormControl(false),
-    usn2Value: new FormControl(false),
-    patentValue: new FormControl(false)
-  });
+  @Output() save = new EventEmitter<Candidate>();
+
+  readonly vm$ = this.store.select(
+    createSelector(
+      [stageFeature.selectData, interviewerFeature.selectData],
+      (stages, interviewers) => ({ stages, interviewers })
+    )
+  );
+
+  saved() {
+    console.log(this.form);
+    if (this.form.invalid) {
+      return;
+    }
+    const model = this.toModel(this.form.value);
+    if (!model) {
+      console.error('form value is invalid', this.form.value);
+      return;
+    }
+    this.save.next(model);
+  }
+
+  private toFormValue(
+    model: Partial<Candidate>
+  ): Observable<typeof this.form.value> {
+    return this.vm$.pipe(
+      filter((x) => Object.values(x).every((arr) => arr.length)),
+      map(({ stages, interviewers }) => ({
+        ...model,
+        interviewer: interviewers.find((x) => x.id === model?.interviewerId),
+        stage: stages.find((x) => x.id === model?.stageId)
+      })),
+      take(1)
+    );
+  }
+
+  private toModel(formValue: typeof this.form.value): Candidate | undefined {
+    const isValid = (
+      formValue: typeof this.form.value
+    ): formValue is { interviewer: { id: number }; stage: { id: number } } => {
+      return ['interviewer', 'stage'].every((x) => x in formValue);
+    };
+
+    if (!isValid(formValue)) {
+      return undefined;
+    }
+    return {
+      ...(formValue as unknown as Candidate),
+      interviewerId: formValue.interviewer.id,
+      stageId: formValue.stage.id
+    };
+  }
 }

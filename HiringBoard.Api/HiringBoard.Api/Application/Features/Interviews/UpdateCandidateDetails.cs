@@ -4,6 +4,7 @@ using HiringBoard.Api.Application.Features.Common;
 using HiringBoard.Api.Domain.Entities;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations;
 
 namespace HiringBoard.Api.Application.Features.Interviews;
@@ -26,9 +27,9 @@ public static class UpdateCandidateDetails
         public string FirstName { get; set; }
         [MaxLength(100)]
         public string LastName { get; set; }
+        public string Position { get; set; }
         [RegularExpression(RegExPatterns.IsEmail)]
         public string Email { get; set; }
-        [RegularExpression(RegExPatterns.IsPhoneNumber)]
         public string Phone { get; set; }
         [MaxLength(500)]
         public string Notes { get; set; }
@@ -36,7 +37,6 @@ public static class UpdateCandidateDetails
         public int InterviewerId { get; set; }
         [Range(1, int.MaxValue)]
         public int StageId { get; set; }
-        public DateTime CreatedDate { get; set; }
     }
 
     public class Profile : AutoMapper.Profile
@@ -51,7 +51,8 @@ public static class UpdateCandidateDetails
                         Notes = src.Notes,
                         InterviewerId = src.InterviewerId,
                         StageId = src.StageId,
-                        CreatedDate = src.CreatedDate,
+                        Position = src.Position,
+                        CreatedDate = target.Interview.CreatedDate
                     };
                 });
         }
@@ -61,7 +62,10 @@ public static class UpdateCandidateDetails
     {
         public override async Task<IResult> Handle(UpdateCandidateDetailsCommand request, CancellationToken cancellationToken)
         {
-            var entity = await DbSet<Candidate>().FindAsync(request.Id, cancellationToken);
+            var entity = await DbSet<Candidate>()
+                .Include(x => x.Interview)
+                .Where(x => x.Id == request.Id)
+                .FirstOrDefaultAsync(cancellationToken);
             if (entity == null)
             {
                 return TypedResults.NotFound();

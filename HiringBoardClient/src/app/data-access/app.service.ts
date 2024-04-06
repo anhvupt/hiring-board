@@ -22,12 +22,15 @@ export class AppService {
     });
   }
 
-  getCandidateId(id: string) {
-    return this.http.get<Board>(`${this.apiUrl}/candidates/${id}`);
+  getCandidateById(id: string) {
+    return this.http.get<Candidate>(`${this.apiUrl}/candidates/${id}`);
   }
 
   createCandidate(model: Candidate) {
-    return this.http.post(`${this.apiUrl}/candidates`, model);
+    return this.http.post(`${this.apiUrl}/candidates`, {
+      ...model,
+      id: undefined
+    });
   }
 
   updateCandidate(model: Candidate) {
