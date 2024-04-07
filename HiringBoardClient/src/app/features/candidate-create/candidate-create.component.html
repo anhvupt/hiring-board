@@ -1,5 +1,6 @@
 <app-candidate-form
   [model]="(defaultInfo$ | ngrxPush) ?? {}"
+  [isLoading]="false"
   (save)="saved($event)"
   >Create new candidate</app-candidate-form
 >

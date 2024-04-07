@@ -18,7 +18,8 @@ import { CommonModule } from '@angular/common';
 import { PushPipe } from '@ngrx/component';
 
 const initialState = {
-  candidate: null as unknown as Candidate
+  candidate: null as unknown as Candidate,
+  isLoading: true
 };
 
 @Component({
@@ -39,7 +40,10 @@ export class CandidateDetailsComponent implements OnInit {
   private readonly appService = inject(AppService);
   private readonly router = inject(Router);
 
-  vm$ = this.store.select(({ candidate }) => ({ candidate }));
+  vm$ = this.store.select(({ candidate, isLoading }) => ({
+    candidate,
+    isLoading
+  }));
 
   constructor() {
     this.store.setState(initialState);
@@ -77,12 +81,16 @@ export class CandidateDetailsComponent implements OnInit {
   }
 
   private readonly loadCandidate = this.store.effect<string>(
-    switchMap((id) =>
-      this.appService.getCandidateById(id).pipe(
-        tapResponse({
-          next: (candidate) => this.store.patchState({ candidate }),
-          error: console.error
-        })
+    pipe(
+      tap(() => this.store.patchState({ isLoading: true })),
+      switchMap((id) =>
+        this.appService.getCandidateById(id).pipe(
+          tapResponse({
+            next: (candidate) =>
+              this.store.patchState({ candidate, isLoading: false }),
+            error: console.error
+          })
+        )
       )
     )
   );

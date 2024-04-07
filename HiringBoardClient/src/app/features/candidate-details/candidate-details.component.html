@@ -1,6 +1,7 @@
 <app-candidate-form
   *ngIf="vm$ | ngrxPush as vm"
   [model]="vm.candidate"
+  [isLoading]="vm.isLoading"
   (save)="saved($event)"
   >Candidate</app-candidate-form
 >

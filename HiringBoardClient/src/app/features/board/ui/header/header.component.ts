@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
-import { PushPipe } from '@ngrx/component';
+import { LetDirective, PushPipe } from '@ngrx/component';
 import { Store } from '@ngrx/store';
 import {
   TuiButtonModule,
@@ -21,6 +21,7 @@ import { debounceTime, map, pipe, tap } from 'rxjs';
 import { CandidateParams, Interviewer } from '~/data-access/app.model';
 import { interviewerFeature } from '~/store/features/interviewer.feature';
 import { BoardStore } from '../../board.store';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-header',
@@ -39,7 +40,9 @@ import { BoardStore } from '../../board.store';
     FormsModule,
     ReactiveFormsModule,
     TuiStringifyContentPipeModule,
-    TuiFilterByInputPipeModule
+    TuiFilterByInputPipeModule,
+    LetDirective,
+    CommonModule
   ],
   templateUrl: './header.component.html',
   styles: `
@@ -56,11 +59,17 @@ export class HeaderComponent {
     createdDate: null
   };
 
-  private readonly store = inject(BoardStore);
+  private readonly cStore = inject(BoardStore);
+  private readonly store = inject(Store);
 
   readonly paramsForm = inject(FormBuilder).group(this.formConfigs);
-  readonly items$ = inject(Store)
-    .select(interviewerFeature.selectData)
+
+  readonly vm$ = this.cStore
+    .select(
+      this.store.select(interviewerFeature.selectData),
+      this.cStore.isLoading$,
+      (interviewers, isLoading) => ({ interviewers, isLoading })
+    )
     .pipe(takeUntilDestroyed());
 
   readonly stringify = (item: Interviewer) => item.name;
@@ -79,9 +88,9 @@ export class HeaderComponent {
     );
   }
 
-  private loadCandidates = this.store.effect<Partial<CandidateParams>>(
+  private loadCandidates = this.cStore.effect<Partial<CandidateParams>>(
     pipe(
-      tap((value) => this.store.reloadBoard(value)),
+      tap((value) => this.cStore.reloadBoard(value)),
       takeUntilDestroyed()
     )
   );

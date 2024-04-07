@@ -10,7 +10,11 @@
 
       <div class="flex flex-col lg:flex-row items-start gap-4">
         <div class="w-full lg:w-auto lg:flex-1">
-          <tui-input formControlName="firstName">
+          <tui-input
+            formControlName="firstName"
+            [class.tui-skeleton]="isLoading"
+            [class.tui-skeleton_text]="isLoading"
+          >
             First name
             <input placeholder="Field placeholder" tuiTextfield />
             <span class="tui-required"></span>
@@ -22,7 +26,11 @@
         </div>
 
         <div class="w-full lg:w-auto lg:flex-1">
-          <tui-input formControlName="lastName">
+          <tui-input
+            formControlName="lastName"
+            [class.tui-skeleton]="isLoading"
+            [class.tui-skeleton_text]="isLoading"
+          >
             Last name
             <input placeholder="Field placeholder" tuiTextfield />
             <span class="tui-required"></span>
@@ -35,7 +43,11 @@
       </div>
 
       <div class="w-full lg:w-auto lg:flex-1">
-        <tui-input formControlName="position">
+        <tui-input
+          formControlName="position"
+          [class.tui-skeleton]="isLoading"
+          [class.tui-skeleton_text]="isLoading"
+        >
           Position
           <input placeholder="Field placeholder" tuiTextfield />
           <span class="tui-required"></span>
@@ -48,7 +60,11 @@
 
       <div class="flex flex-col lg:flex-row items-start gap-4">
         <div class="w-full lg:w-auto lg:flex-1">
-          <tui-input formControlName="email">
+          <tui-input
+            formControlName="email"
+            [class.tui-skeleton]="isLoading"
+            [class.tui-skeleton_text]="isLoading"
+          >
             Email
             <input placeholder="Field placeholder" tuiTextfield />
             <span class="tui-required"></span>
@@ -60,7 +76,11 @@
         </div>
 
         <div class="w-full lg:w-auto lg:flex-1">
-          <tui-input formControlName="phone">
+          <tui-input
+            formControlName="phone"
+            [class.tui-skeleton]="isLoading"
+            [class.tui-skeleton_text]="isLoading"
+          >
             Phone number
             <input placeholder="Field placeholder" tuiTextfield />
             <span class="tui-required"></span>
@@ -81,7 +101,9 @@
             class="flex-1 tui-space_vertical_4"
             formControlName="interviewer"
             tuiTextfieldSize="l"
-            placeholder="Choose the created interviewer"
+            placeholder="Choose the interviewer"
+            [class.tui-skeleton]="isLoading"
+            [class.tui-skeleton_text]="isLoading"
             [stringify]="stringify"
             [tuiTextfieldLabelOutside]="true"
             [tuiTextfieldCleaner]="true"
@@ -104,7 +126,9 @@
             class="flex-1 tui-space_vertical_4"
             formControlName="stage"
             tuiTextfieldSize="l"
-            placeholder="Choose the created interviewer"
+            placeholder="Choose the stage"
+            [class.tui-skeleton]="isLoading"
+            [class.tui-skeleton_text]="isLoading"
             [stringify]="stringify"
             [tuiTextfieldLabelOutside]="true"
             [tuiTextfieldCleaner]="true"
@@ -124,7 +148,12 @@
       </div>
 
       <div class="w-full">
-        <tui-textarea formControlName="notes" [expandable]="true">
+        <tui-textarea
+          formControlName="notes"
+          [expandable]="true"
+          [class.tui-skeleton]="isLoading"
+          [class.tui-skeleton_text]="isLoading"
+        >
           Notes
         </tui-textarea>
       </div>
@@ -140,6 +169,8 @@
         tuiButton
         type="button"
         class="tui-form__button"
+        [class.tui-skeleton]="isLoading"
+        [class.tui-skeleton_text]="isLoading"
       >
         <a class="h-full w-full flex items-center" [routerLink]="'/'">
           Cancel
@@ -152,6 +183,8 @@
         type="button"
         class="tui-form__button"
         (click)="saved()"
+        [class.tui-skeleton]="isLoading"
+        [class.tui-skeleton_text]="isLoading"
       >
         Submit
       </button>

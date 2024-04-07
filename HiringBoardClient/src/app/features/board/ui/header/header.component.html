@@ -1,5 +1,5 @@
 <h1 class="tui-text_h6 text-primary">Hiring board</h1>
-<form [formGroup]="paramsForm" class="py-4">
+<form *ngIf="vm$ | ngrxPush as vm" [formGroup]="paramsForm" class="py-4">
   <div class="flex items-start lg:items-center justify-between">
     <div class="flex items-center w-full justify-between gap-2">
       <tui-input
@@ -7,13 +7,22 @@
         class="w-full lg:w-1/2"
         tuiTextfieldSize="m"
         tuiAutofocus
+        [class.tui-skeleton]="vm.isLoading"
+        [class.tui-skeleton_text]="vm.isLoading"
         [tuiTextfieldCleaner]="true"
         [tuiTextfieldLabelOutside]="true"
       >
         Search...
         <input tuiTextfield />
       </tui-input>
-      <button tuiButton appearance="primary-button" size="m" type="button">
+      <button
+        tuiButton
+        appearance="primary-button"
+        size="m"
+        type="button"
+        [class.tui-skeleton]="vm.isLoading"
+        [class.tui-skeleton_text]="vm.isLoading"
+      >
         <a
           class="h-full w-full flex items-center"
           [routerLink]="'candidate/create'"
@@ -29,6 +38,8 @@
       tuiTextfieldSize="m"
       placeholder="Choose the created interviewer"
       [stringify]="stringify"
+      [class.tui-skeleton]="vm.isLoading"
+      [class.tui-skeleton_text]="vm.isLoading"
       [tuiTextfieldLabelOutside]="true"
       [tuiTextfieldCleaner]="true"
     >
@@ -36,13 +47,15 @@
       <tui-data-list-wrapper
         *tuiDataList
         [itemContent]="stringify | tuiStringifyContent"
-        [items]="(items$ | ngrxPush) ?? []"
+        [items]="vm.interviewers"
       ></tui-data-list-wrapper>
     </tui-combo-box>
     <tui-input-date
       formControlName="createdDate"
       tuiTextfieldSize="m"
       class="tui-space_vertical-4 flex-1 my-0"
+      [class.tui-skeleton]="vm.isLoading"
+      [class.tui-skeleton_text]="vm.isLoading"
       [tuiTextfieldLabelOutside]="true"
       [tuiTextfieldCleaner]="true"
     >

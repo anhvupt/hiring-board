@@ -2,7 +2,7 @@ import { CdkDragDrop, DragDropModule } from '@angular/cdk/drag-drop';
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { PushPipe } from '@ngrx/component';
+import { LetDirective, PushPipe } from '@ngrx/component';
 import { provideComponentStore } from '@ngrx/component-store';
 import { Store } from '@ngrx/store';
 import {
@@ -12,13 +12,14 @@ import {
 } from '@taiga-ui/core';
 import { TuiSelectModule } from '@taiga-ui/kit';
 import { concatMap, distinctUntilChanged, take, tap } from 'rxjs';
-import { CandidateBoardView, Stage } from '~/data-access/app.model';
+import { Candidate, CandidateBoardView, Stage } from '~/data-access/app.model';
 import { AppService } from '~/data-access/app.service';
 import { interviewerFeature } from '~/store/features/interviewer.feature';
 import { stageFeature } from '~/store/features/stages.feature';
 import { BoardStore } from './board.store';
 import { BoardColumnComponent } from './ui/board-column/board-column.component';
 import { HeaderComponent } from './ui/header/header.component';
+import { skeletonStage } from './board.const';
 
 @Component({
   selector: 'app-board',
@@ -33,7 +34,8 @@ import { HeaderComponent } from './ui/header/header.component';
     TuiSvgModule,
     HeaderComponent,
     BoardColumnComponent,
-    PushPipe
+    PushPipe,
+    LetDirective
   ],
   templateUrl: './board.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -49,9 +51,17 @@ export class BoardComponent {
       this.cStore.state$,
       this.store.select(interviewerFeature.selectData),
       this.store.select(stageFeature.selectData),
-      (state, interviewers, stages) => ({ ...state, interviewers, stages })
+      this.cStore.isLoading$,
+      (state, interviewers, stages, isLoading) => ({
+        ...state,
+        interviewers,
+        stages,
+        isLoading
+      })
     )
     .pipe(tap((x) => console.log('vm:', x)));
+
+  readonly skeletonStages = new Array(4).map(() => skeletonStage);
 
   getConnectedList(stages: Stage[], id: number) {
     return stages.filter((x) => x.id !== id);

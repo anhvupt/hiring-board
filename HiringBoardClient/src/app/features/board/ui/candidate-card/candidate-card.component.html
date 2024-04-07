@@ -12,10 +12,17 @@
           [(ngModel)]="isSelected"
           (ngModelChange)="toggleChecked()"
         />
-        <p tuiSubtitle class="tui-text_body-l font-bold text-primary">
-          <a class="h-full w-full" [routerLink]="['candidate', candidate.id]">{{
-            candidate.name
-          }}</a>
+        <p
+          tuiSubtitle
+          class="tui-text_body-l min-w-full font-bold text-primary"
+        >
+          <a
+            class="h-full w-full"
+            [routerLink]="
+              (isLoading$ | ngrxPush) ? [] : ['candidate', candidate?.id || '']
+            "
+            >{{ (isLoading$ | ngrxPush) ? '' : candidate?.name || '' }}</a
+          >
         </p>
       </div>
       <tui-hosted-dropdown
@@ -39,14 +46,18 @@
               tuiOption
               (click)="moveTo(stage.id)"
             >
-              {{ stage.name }}
+              {{ (isLoading$ | ngrxPush) ? '' : stage.name || '' }}
             </button>
           </tui-opt-group>
         </tui-data-list>
       </ng-template>
     </div>
-    <p class="tui-text_body-s2 text-gray-500">{{ candidate.position }}</p>
-    <p class="tui-text_body-s leading-relaxed">{{ candidate.notes }}</p>
+    <p class="tui-text_body-s2 text-gray-500">
+      {{ (isLoading$ | ngrxPush) ? '' : candidate?.position || '' }}
+    </p>
+    <p class="tui-text_body-s leading-relaxed">
+      {{ (isLoading$ | ngrxPush) ? '' : candidate?.notes || '' }}
+    </p>
   </div>
   <div
     tuiCardMedium
@@ -55,20 +66,26 @@
   >
     <p>
       <tui-svg src="tuiIconMail" class="mr-1 text-gray-300" />
-      {{ candidate.email }}
+      {{ (isLoading$ | ngrxPush) ? '' : candidate?.email || '' }}
     </p>
     <p>
       <tui-svg src="tuiIconPhone" class="mr-1 text-gray-300" />{{
-        candidate.phone
+        (isLoading$ | ngrxPush) ? '' : candidate?.phone || ''
       }}
     </p>
   </div>
   <div class="flex items-center justify-between mt-2">
     <tui-badge
       status="custom"
-      [value]="candidate.createdDate | date : 'mediumDate'"
+      [value]="
+        (isLoading$ | ngrxPush)
+          ? ''
+          : (candidate?.createdDate | date : 'mediumDate' || '')
+      "
       class="tui-space_horizontal-2 tui-space_vertical-2 tui-text_body-s2 m-0"
     ></tui-badge>
-    <span class="underline">{{ candidate.interviewer }}</span>
+    <span class="underline">{{
+      (isLoading$ | ngrxPush) ? '' : candidate?.interviewer || ''
+    }}</span>
   </div>
 </div>

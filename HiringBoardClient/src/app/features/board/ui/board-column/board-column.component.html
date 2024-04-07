@@ -3,8 +3,12 @@
   class="flex flex-col flex-grow items-start justify-center bg-gray-200 h-full p-2 rounded"
 >
   <div class="flex items-center justify-between w-full mb-2">
-    <h2 class="tui-text_body-l2 font-semibold text-gray-500">
-      {{ column.name }}
+    <h2
+      class="tui-text_body-l2 font-semibold text-gray-500 min-w-20"
+      [class.tui-skeleton]="vm.isLoading"
+      [class.tui-skeleton_text]="vm.isLoading"
+    >
+      {{ vm.isLoading ? '' : column.name }}
     </h2>
     <button
       (click)="toggleSelectable()"
@@ -12,6 +16,8 @@
       appearance="flat"
       type="button"
       size="xs"
+      [class.tui-skeleton]="vm.isLoading"
+      [class.tui-skeleton_text]="vm.isLoading"
     >
       @if (!vm.isSelectable) {
       <span class="text-gray-500">Select</span>
@@ -22,28 +28,35 @@
   </div>
   <div
     cdkDropList
-    [id]="column.id.toString()"
-    [cdkDropListData]="list"
-    [cdkDropListConnectedTo]="connectedIds"
+    [id]="vm.isLoading ? '' : column.id.toString()"
+    [cdkDropListData]="vm.isLoading ? [] : list"
+    [cdkDropListConnectedTo]="vm.isLoading ? [] : connectedIds"
     (cdkDropListDropped)="dropped($event)"
     class="flex flex-col gap-2 w-full min-h-8"
   >
-    @for (item of list; track item) {
-    <div cdkDrag>
+    @for (item of (vm.isLoading ? skeletonItems: list); track item) {
+    <div cdkDrag (cdkDragStarted)="dragStarted()">
+      @if(vm.isLoading || !(isItemOnDragging(item.id) | ngrxPush)){
       <app-candidate-card
         [candidate]="item"
-        [connectedList]="connectedList"
-        [isSelected]="vm.selectedIds.has(item.id)"
+        [connectedList]="vm.isLoading ? [] : connectedList"
+        [isSelected]="vm.isLoading ? false : vm.selectedIds.has(item.id)"
         [isSelectable]="vm.isSelectable"
         (checkChanges)="toggleSelected(item.id)"
       />
+      }
       <span
         *cdkDragPlaceholder
         class="bg-accent-light border border-primary border-dashed transition min-h-32 rounded-lg"
       ></span>
-      @if(selectedItemsCount > 1){
-      <div *cdkDragPreview class="opacity-70">
-        {{ vm.selectedIds.size + ' items' }}
+      @if(vm.selectedIds.size > 1){
+      <div *cdkDragPreview class="w-1/4">
+        <ng-container
+          *ngTemplateOutlet="
+            cardPreviewTpl;
+            context: { $implicit: vm.selectedIds.size }
+          "
+        ></ng-container>
       </div>
       }
     </div>
@@ -56,9 +69,34 @@
     <a
       class="w-full h-full flex items-center justify-center"
       [routerLink]="'candidate/create'"
-      [queryParams]="{ stageId: column.id }"
+      [queryParams]="{ stageId: vm.isLoading ? '' : column.id }"
     >
       Add a card
     </a>
   </button>
 </div>
+
+<ng-template #cardPreviewTpl let-itemCount>
+  <div
+    tuiCardMedium
+    tuiSurface="elevated"
+    class="bg-white relative border border-primary rounded-lg drop-shadow-lg flex flex-col gap-2 px-4 py-6 w-full cursor-move"
+  >
+    <span class="p-2 rounded-full bg-accent-light">{{
+      'Moving ' + +itemCount + ' candidates'
+    }}</span>
+    <div class="flex flex-col gap-1">
+      <div class="flex items-center justify-between">
+        <div class="flex gap-2 items-center">
+          <p class="w-full h-5 rounded bg-gray-300 animate-pulse"></p>
+        </div>
+        <p class="w-full h-5 rounded animate-pulse bg-gray-200"></p>
+        <p class="w-full h-5 rounded animate-pulse bg-gray-200"></p>
+      </div>
+    </div>
+    <div
+      tuiCardMedium
+      tuiSurface="elevated"
+      class="bg-gray-100 w-15 rounded flex flex-col py-3 px-6 animate-pulse"
+    ></div></div
+></ng-template>

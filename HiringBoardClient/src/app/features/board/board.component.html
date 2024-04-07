@@ -1,15 +1,17 @@
 <div class="py-4">
   <app-header />
   <div
-    *ngIf="vm$ | ngrxPush as vm"
+    *ngrxLet="vm$ as vm"
     class="flex flex-row items-start gap-2 overflow-auto"
   >
-    @for (stage of vm.stages; track $index) {
+    @for (stage of (vm.isLoading ? skeletonStages : vm.stages); track $index) {
     <div class="flex-1 min-w-60">
       <app-board-column
         [column]="stage"
-        [list]="vm.candidates[stage.id]"
-        [connectedList]="getConnectedList(vm.stages, stage.id)"
+        [list]="vm.isLoading ? [] : vm.candidates[stage.id]"
+        [connectedList]="
+          vm.isLoading ? [] : getConnectedList(vm.stages, stage.id)
+        "
         (itemsDropped)="dropped($event)"
       />
     </div>

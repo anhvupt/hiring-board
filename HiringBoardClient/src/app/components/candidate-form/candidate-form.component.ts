@@ -80,6 +80,7 @@ export class CandidateFormComponent {
   @Input() set model(model: Partial<Candidate>) {
     this.toFormValue(model).subscribe((value) => this.form.patchValue(value));
   }
+  @Input() isLoading = true;
 
   @Output() save = new EventEmitter<Candidate>();
 

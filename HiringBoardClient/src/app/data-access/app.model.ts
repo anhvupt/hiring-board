@@ -21,7 +21,6 @@ export interface CandidateBoardView {
   notes: string;
   interviewer: string;
   createdDate: Date;
-  selected: boolean;
 }
 
 export interface Candidate {

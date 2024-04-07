@@ -56,7 +56,7 @@ export class CandidateCardComponent {
   open = false;
   _isSelected = false;
 
-  @Input({ required: true }) candidate!: CandidateBoardView;
+  @Input({ required: true }) candidate: CandidateBoardView | null = null;
   @Input() connectedList: Stage[] = [];
   @Input() isSelectable = false;
   @Input() set isSelected(value: boolean) {
@@ -68,8 +68,13 @@ export class CandidateCardComponent {
   get isSelected() {
     return this._isSelected;
   }
+  readonly isLoading$ = this.boardStore.isLoading$;
 
   moveTo(id: number) {
+    if (!this.candidate) {
+      console.error('candidate must not be null');
+      return;
+    }
     this.appService.updateCandidateStage([this.candidate.id], id).subscribe({
       next: () => this.boardStore.reloadBoard(),
       error: (e) => alert(e)
